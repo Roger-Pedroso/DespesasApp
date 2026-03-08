@@ -16,6 +16,23 @@ export const calcularAlocacao50_30_20 = async (mes, ano) => {
   try {
     const database = await getDatabase();
 
+    // Verificar se tipo_gasto coluna existe antes de usar
+    const schema = await database.getAllAsync(`PRAGMA table_info(despesas)`);
+    const temTipoGasto = schema && schema.some(col => col.name === 'tipo_gasto');
+    
+    if (!temTipoGasto) {
+      // Se coluna não existe ainda, retornar dados vazios
+      console.warn('[ALOCACAO] ⚠️ Coluna tipo_gasto não existe. Aguardando migração...');
+      return {
+        essencial: { total: 0, alvo: 0, percent: 0, alvoPercent: 50, quantidade: 0 },
+        desejo: { total: 0, alvo: 0, percent: 0, alvoPercent: 30, quantidade: 0 },
+        poupar: { total: 0, alvo: 0, percent: 0, alvoPercent: 20, quantidade: 0 },
+        totalMes: 0,
+        status: 'sem-dados',
+        recomendacao: 'Adicionando despesas...',
+      };
+    }
+
     // Buscar total de gastos por tipo
     const resultado = await database.getAllAsync(
       `SELECT 
