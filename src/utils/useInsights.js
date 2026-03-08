@@ -44,7 +44,7 @@ export const useInsights = () => {
       setComparison(comparacao);
       setTopCategories(topCats);
       setForecast(previsao);
-      setEconomyScore(economia);
+      setEconomyScore(economia?.score || 50);
       setWorstDay(piorDia);
     } catch (error) {
       const handled = handleError(error, 'useInsights.carregarInsights');

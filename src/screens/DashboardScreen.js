@@ -45,20 +45,23 @@ const DashboardScreen = () => {
         <Text style={styles.chartTitle}>📈 Últimos 12 Meses</Text>
         <View style={styles.chartContent}>
           <View style={styles.chartBars}>
-            {trends.map((trend, idx) => (
-              <View key={idx} style={styles.barWrapper}>
-                <View
-                  style={[
-                    styles.bar,
-                    {
-                      height: (trend.total / maxValue) * 150,
-                      backgroundColor: '#6C5CE7',
-                    },
-                  ]}
-                />
-                <Text style={styles.barLabel}>{trend.mes_ano ? trend.mes_ano.slice(-2) : ''}</Text>
-              </View>
-            ))}
+            {trends.map((trend, idx) => {
+              const mesLabel = String(trend.mes || '').padStart(2, '0');
+              return (
+                <View key={idx} style={styles.barWrapper}>
+                  <View
+                    style={[
+                      styles.bar,
+                      {
+                        height: (trend.total / maxValue) * 150,
+                        backgroundColor: '#6C5CE7',
+                      },
+                    ]}
+                  />
+                  <Text style={styles.barLabel}>{mesLabel}</Text>
+                </View>
+              );
+            })}
           </View>
           <Text style={styles.chartNote}>
             Máximo: R$ {(maxValue || 0).toFixed(2).replace('.', ',')}
@@ -71,8 +74,8 @@ const DashboardScreen = () => {
   const renderComparison = () => {
     if (!comparison) return null;
 
-    const mes_atual = comparison.mes_atual || 0;
-    const mes_anterior = comparison.mes_anterior || 0;
+    const mes_atual = comparison.mesAtual?.total || 0;
+    const mes_anterior = comparison.mesAnterior?.total || 0;
     const variance = mes_atual - mes_anterior;
     const percentageChange = mes_anterior > 0 ? ((variance / mes_anterior) * 100).toFixed(1) : 0;
     const trend = variance > 0 ? '📈 Aumento' : '📉 Redução';
@@ -152,10 +155,10 @@ const DashboardScreen = () => {
   const renderForecast = () => {
     if (!forecast) return null;
 
-    const totalMesAtual = forecast.total_mes_atual || 0;
-    const daysRemaining = 30 - new Date().getDate();
-    const dailyAverage = ((totalMesAtual / Math.max(new Date().getDate(), 1)) || 0).toFixed(2);
-    const projected = (parseFloat(dailyAverage) * 30).toFixed(2);
+    const totalMesAtual = forecast.totalAteHoje || 0;
+    const previsaoTotal = forecast.previsaoTotal || 0;
+    const diasRestantes = forecast.diasRestantes || 0;
+    const mediaPorDia = forecast.mediaPorDia || 0;
 
     return (
       <View style={styles.forecastContainer}>
@@ -172,18 +175,18 @@ const DashboardScreen = () => {
           <View style={styles.forecastCard}>
             <Text style={styles.forecastLabel}>Projeção Final</Text>
             <Text style={styles.forecastValue}>
-              R$ {(projected || '0').toString().replace('.', ',')}
+              R$ {(previsaoTotal || 0).toFixed(2).replace('.', ',')}
             </Text>
           </View>
 
           <View style={styles.forecastCard}>
             <Text style={styles.forecastLabel}>Dias Restantes</Text>
-            <Text style={styles.forecastValue}>{daysRemaining}</Text>
+            <Text style={styles.forecastValue}>{diasRestantes}</Text>
           </View>
         </View>
 
         <Text style={styles.forecastNote}>
-          Média diária: R$ {(dailyAverage || '0').toString().replace('.', ',')}
+          Média diária: R$ {(mediaPorDia || 0).toFixed(2).replace('.', ',')}
         </Text>
       </View>
     );
@@ -233,14 +236,14 @@ const DashboardScreen = () => {
 
         <View style={styles.worstDayCard}>
           <View style={styles.worstDayInfo}>
-            <Text style={styles.worstDayDate}>{worstDay.data}</Text>
+            <Text style={styles.worstDayDate}>{worstDay.data || 'N/A'}</Text>
             <Text style={styles.worstDayAmount}>
-              R$ {worstDay.total.toFixed(2).replace('.', ',')}
+              R$ {(worstDay.total || 0).toFixed(2).replace('.', ',')}
             </Text>
           </View>
           <View style={styles.worstDayExpenses}>
             <Text style={styles.expensesLabel}>
-              {worstDay.quantidade_despesas} despesa{worstDay.quantidade_despesas !== 1 ? 's' : ''}
+              {worstDay.quantidade || 0} despesa{(worstDay.quantidade || 0) !== 1 ? 's' : ''}
             </Text>
           </View>
         </View>
