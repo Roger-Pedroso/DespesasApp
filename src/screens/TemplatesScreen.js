@@ -5,7 +5,7 @@ import { useTemplates } from '../utils/useTemplates';
 const TemplatesScreen = ({ navigation }) => {
   const { templates, loadingTemplates, carregarTemplates, adicionarTemplate, removerTemplate } = useTemplates();
   const [showModal, setShowModal] = useState(false);
-  const [newTemplate, setNewTemplate] = useState({ nome: '', categoria: '', valor: '', forma_pagamento: 'Cartão' });
+  const [newTemplate, setNewTemplate] = useState({ nome: '', categoria: '', valor: '', forma_pagamento: 'Cartão', recorrencia: 'nenhuma' });
 
   React.useEffect(() => {
     carregarTemplates();
@@ -23,9 +23,10 @@ const TemplatesScreen = ({ navigation }) => {
         categoria: newTemplate.categoria,
         valor: parseFloat(newTemplate.valor),
         forma_pagamento: newTemplate.forma_pagamento,
+        recorrencia: newTemplate.recorrencia,
       });
       Alert.alert('Criado com sucesso!');
-      setNewTemplate({ nome: '', categoria: '', valor: '', forma_pagamento: 'Cartão' });
+      setNewTemplate({ nome: '', categoria: '', valor: '', forma_pagamento: 'Cartão', recorrencia: 'nenhuma' });
       setShowModal(false);
     } catch (error) {
       Alert.alert('Erro ao criar template');
@@ -107,10 +108,19 @@ const TemplatesScreen = ({ navigation }) => {
               <TextInput style={styles.input} placeholder="Nome do Template" value={newTemplate.nome} onChangeText={(text) => setNewTemplate({ ...newTemplate, nome: text })} />
               <TextInput style={styles.input} placeholder="Categoria" value={newTemplate.categoria} onChangeText={(text) => setNewTemplate({ ...newTemplate, categoria: text })} />
               <TextInput style={styles.input} placeholder="Valor" value={newTemplate.valor} onChangeText={(text) => setNewTemplate({ ...newTemplate, valor: text })} keyboardType="decimal-pad" />
+              <Text style={{ fontSize: 12, fontWeight: '600', color: '#2D3436', marginBottom: 8 }}>Forma de Pagamento</Text>
               <View style={{ flexDirection: 'row', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
                 {['Cartão', 'Dinheiro', 'Transferência', 'PIX'].map((p) => (
                   <TouchableOpacity key={p} style={[styles.paymentBtn, newTemplate.forma_pagamento === p && { backgroundColor: '#6C5CE7', borderColor: '#6C5CE7' }]} onPress={() => setNewTemplate({ ...newTemplate, forma_pagamento: p })}>
                     <Text style={[{ fontSize: 11, color: '#636E72' }, newTemplate.forma_pagamento === p && { color: '#fff', fontWeight: '600' }]}>{p}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <Text style={{ fontSize: 12, fontWeight: '600', color: '#2D3436', marginBottom: 8 }}>Recorrência</Text>
+              <View style={{ flexDirection: 'row', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+                {['nenhuma', 'semanal', 'mensal'].map((r) => (
+                  <TouchableOpacity key={r} style={[styles.paymentBtn, newTemplate.recorrencia === r && { backgroundColor: '#6C5CE7', borderColor: '#6C5CE7' }]} onPress={() => setNewTemplate({ ...newTemplate, recorrencia: r })}>
+                    <Text style={[{ fontSize: 11, color: '#636E72' }, newTemplate.recorrencia === r && { color: '#fff', fontWeight: '600' }]}>{r.charAt(0).toUpperCase() + r.slice(1)}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
