@@ -15,7 +15,7 @@ import { useExpensas } from '../context/ExpensasContext';
 
 const SearchScreen = () => {
   const { categorias } = useExpensas();
-  const { buscarDespesasComFiltros, loading } = useBuscaAvancada();
+  const { buscar, loadingBusca } = useBuscaAvancada();
   
   const [searchText, setSearchText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -34,7 +34,7 @@ const SearchScreen = () => {
         maxValor: maxValue ? parseFloat(maxValue) : undefined,
       };
 
-      const data = await buscarDespesasComFiltros(filters);
+      const data = await buscar(filters);
       setResults(data);
 
       if (data.length === 0) {
@@ -172,9 +172,9 @@ const SearchScreen = () => {
           <TouchableOpacity
             style={[styles.button, styles.searchButton]}
             onPress={handleSearch}
-            disabled={loading}
+            disabled={loadingBusca}
           >
-            {loading ? (
+            {loadingBusca ? (
               <ActivityIndicator color="#fff" />
             ) : (
               <Text style={styles.buttonText}>🔍 Buscar</Text>

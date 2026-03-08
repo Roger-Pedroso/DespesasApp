@@ -9,7 +9,6 @@ import {
   Dimensions,
 } from 'react-native';
 import { useInsights } from '../utils/useInsights';
-import { COLORS } from '../utils/theme';
 
 const DashboardScreen = () => {
   const {
@@ -27,7 +26,7 @@ const DashboardScreen = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color="#6C5CE7" />
       </View>
     );
   }
@@ -51,7 +50,7 @@ const DashboardScreen = () => {
                     styles.bar,
                     {
                       height: (trend.total / maxValue) * 150,
-                      backgroundColor: COLORS.primary,
+                      backgroundColor: '#6C5CE7',
                     },
                   ]}
                 />
@@ -320,7 +319,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'transparent',
   },
   tabActive: {
-    borderBottomColor: COLORS.primary,
+    borderBottomColor: '#6C5CE7',
   },
   tabText: {
     fontSize: 14,
@@ -328,7 +327,7 @@ const styles = StyleSheet.create({
     color: '#636E72',
   },
   tabTextActive: {
-    color: COLORS.primary,
+    color: '#6C5CE7',
   },
   content: {
     flex: 1,
@@ -405,7 +404,7 @@ const styles = StyleSheet.create({
   comparisonValue: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: '#6C5CE7',
   },
   varianceContainer: {
     borderRadius: 8,
@@ -453,13 +452,13 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
-    backgroundColor: COLORS.primary,
+    backgroundColor: '#6C5CE7',
     borderRadius: 4,
   },
   categoryValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: '#6C5CE7',
     minWidth: 100,
     textAlign: 'right',
   },
@@ -498,7 +497,7 @@ const styles = StyleSheet.create({
   forecastValue: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: '#6C5CE7',
   },
   forecastNote: {
     fontSize: 14,
@@ -527,7 +526,7 @@ const styles = StyleSheet.create({
   scoreValue: {
     fontSize: 36,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: '#6C5CE7',
   },
   scoreLabel: {
     fontSize: 14,

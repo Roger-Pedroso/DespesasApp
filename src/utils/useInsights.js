@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import {
   buscarTendencia12Meses,
   compararMesAtualVsAnterior,
@@ -13,11 +13,16 @@ import { handleError, logError } from '../utils/errorHandler';
  * Hook para Dashboard e Insights
  */
 export const useInsights = () => {
-  const [insights, setInsights] = useState(null);
-  const [loadingInsights, setLoadingInsights] = useState(false);
+  const [trends, setTrends] = useState(null);
+  const [comparison, setComparison] = useState(null);
+  const [topCategories, setTopCategories] = useState(null);
+  const [forecast, setForecast] = useState(null);
+  const [economyScore, setEconomyScore] = useState(null);
+  const [worstDay, setWorstDay] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const carregarInsights = useCallback(async (mes, ano) => {
-    setLoadingInsights(true);
+    setLoading(true);
     try {
       const [
         tendencia,
@@ -35,27 +40,35 @@ export const useInsights = () => {
         buscarPiorDia(mes, ano),
       ]);
 
-      setInsights({
-        tendencia,
-        comparacao,
-        topCategorias: topCats,
-        previsao,
-        scoreEconomia: economia,
-        piorDia,
-        carregadoEm: new Date().toISOString(),
-      });
+      setTrends(tendencia);
+      setComparison(comparacao);
+      setTopCategories(topCats);
+      setForecast(previsao);
+      setEconomyScore(economia);
+      setWorstDay(piorDia);
     } catch (error) {
       const handled = handleError(error, 'useInsights.carregarInsights');
       logError(error, { action: 'useInsights.carregarInsights', mes, ano });
       throw handled;
     } finally {
-      setLoadingInsights(false);
+      setLoading(false);
     }
   }, []);
 
+  // Carregar dados ao montar
+  useEffect(() => {
+    const now = new Date();
+    carregarInsights(now.getMonth() + 1, now.getFullYear());
+  }, [carregarInsights]);
+
   return {
-    insights,
-    loadingInsights,
+    trends,
+    comparison,
+    topCategories,
+    forecast,
+    economyScore,
+    worstDay,
+    loading,
     carregarInsights,
   };
 };
