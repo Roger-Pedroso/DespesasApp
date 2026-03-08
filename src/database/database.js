@@ -14,6 +14,7 @@ export const getDatabase = async () => {
 export const initDatabase = async () => {
   const database = await getDatabase();
   try {
+    // Criar tabelas (CREATE TABLE IF NOT EXISTS não sobrescreve tabelas existentes)
     await database.execAsync(`
       PRAGMA journal_mode = WAL;
       PRAGMA foreign_keys = ON;
@@ -23,7 +24,6 @@ export const initDatabase = async () => {
         descricao TEXT NOT NULL CHECK(length(descricao) > 0),
         valor REAL NOT NULL CHECK(valor > 0),
         categoria TEXT NOT NULL,
-        tipo_gasto TEXT NOT NULL DEFAULT 'essencial' CHECK(tipo_gasto IN ('essencial', 'desejo', 'poupar')),
         recorrencia TEXT NOT NULL DEFAULT 'unica',
         forma_pagamento TEXT NOT NULL DEFAULT 'debito',
         data TEXT NOT NULL,
@@ -59,27 +59,31 @@ export const initDatabase = async () => {
       CREATE INDEX IF NOT EXISTS idx_templates_nome ON templates(nome);
       CREATE INDEX IF NOT EXISTS idx_budgets_ano_mes ON budgets(ano_mes);
     `);
+    console.log('[DATABASE] ✅ Tables created/verified');
     
-    // Migration: add tipo_gasto column if it doesn't exist
-    try {
-      const result = await database.getAllAsync(`PRAGMA table_info(despesas)`);
-      const tipoGastoExists = result.some(col => col.name === 'tipo_gasto');
-      
-      if (!tipoGastoExists) {
+    // Migration: adicionar coluna tipo_gasto se não existir
+    const schema = await database.getAllAsync(`PRAGMA table_info(despesas)`);
+    const temTipoGasto = schema && schema.some(col => col.name === 'tipo_gasto');
+    
+    if (!temTipoGasto) {
+      try {
+        console.log('[DATABASE] 🔄 Migrando banco: adicionando tipo_gasto...');
         await database.execAsync(`
           ALTER TABLE despesas ADD COLUMN tipo_gasto TEXT NOT NULL DEFAULT 'essencial' CHECK(tipo_gasto IN ('essencial', 'desejo', 'poupar'));
+        `);
+        await database.execAsync(`
           CREATE INDEX IF NOT EXISTS idx_despesas_tipo_gasto ON despesas(tipo_gasto);
         `);
-        console.log('[DATABASE] ✅ Migration: added tipo_gasto column');
-      } else {
-        console.log('[DATABASE] ✅ tipo_gasto column already exists');
+        console.log('[DATABASE] ✅ Migração concluída: tipo_gasto adicionado');
+      } catch (alterError) {
+        console.error('[DATABASE] ❌ Erro ao migrar:', alterError.message);
+        throw alterError;
       }
-    } catch (migrationError) {
-      logError(migrationError, { action: 'migration-tipo_gasto' });
-      throw migrationError;
+    } else {
+      console.log('[DATABASE] ✅ Coluna tipo_gasto já existe');
     }
     
-    console.log('[DATABASE] ✅ Database initialized successfully');
+    console.log('[DATABASE] ✅ Database inicializado com sucesso');
   } catch (error) {
     const handled = handleError(error, 'initDatabase');
     logError(error, { action: 'initDatabase' });
