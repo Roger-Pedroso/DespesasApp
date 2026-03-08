@@ -60,6 +60,20 @@ export const initDatabase = async () => {
       CREATE INDEX IF NOT EXISTS idx_templates_nome ON templates(nome);
       CREATE INDEX IF NOT EXISTS idx_budgets_ano_mes ON budgets(ano_mes);
     `);
+    
+    // Migration: add tipo_gasto column if it doesn't exist
+    try {
+      await database.execAsync(`
+        ALTER TABLE despesas ADD COLUMN tipo_gasto TEXT NOT NULL DEFAULT 'essencial' CHECK(tipo_gasto IN ('essencial', 'desejo', 'poupar'));
+      `);
+      console.log('[DATABASE] ✅ Migration: added tipo_gasto column');
+    } catch (migrationError) {
+      // Column already exists - this is expected on subsequent app runs
+      if (!migrationError.message.includes('duplicate column')) {
+        throw migrationError;
+      }
+    }
+    
     console.log('[DATABASE] ✅ Database initialized successfully');
   } catch (error) {
     const handled = handleError(error, 'initDatabase');
