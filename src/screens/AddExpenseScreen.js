@@ -4,7 +4,7 @@ import {
   ScrollView, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { useExpensas } from '../context/ExpensasContext';
-import { CATEGORIAS, RECORRENCIAS, FORMAS_PAGAMENTO } from '../utils/constants';
+import { CATEGORIAS, RECORRENCIAS, FORMAS_PAGAMENTO, getTipoGastoFromCategoria } from '../utils/constants';
 import { isValidDate, isValidBRL, isValidDescricao } from '../utils/validators';
 import { handleError } from '../utils/errorHandler';
 
@@ -13,6 +13,7 @@ const AddExpenseScreen = ({ navigation }) => {
   const [descricao, setDescricao] = useState('');
   const [valor, setValor] = useState('');
   const [categoria, setCategoria] = useState('alimentacao');
+  const [tipoGasto, setTipoGasto] = useState(getTipoGastoFromCategoria('alimentacao'));
   const [recorrencia, setRecorrencia] = useState('unica');
   const [formaPagamento, setFormaPagamento] = useState('debito');
   const [data, setData] = useState(() => {
@@ -48,6 +49,11 @@ const AddExpenseScreen = ({ navigation }) => {
     return `${d}/${m}/${y}`;
   });
 
+  const handleChangeCategoria = (novaCategoria) => {
+    setCategoria(novaCategoria);
+    setTipoGasto(getTipoGastoFromCategoria(novaCategoria));
+  };
+
   const salvar = useCallback(async () => {
     // Prevenir double-tap (ignorar cliques dentro de 1 segundo)
     const now = Date.now();
@@ -80,6 +86,7 @@ const AddExpenseScreen = ({ navigation }) => {
         descricao: descricao.trim(),
         valor: valorNum,
         categoria,
+        tipo_gasto: tipoGasto,
         recorrencia,
         forma_pagamento: formaPagamento,
         data: isoData,
@@ -145,13 +152,44 @@ const AddExpenseScreen = ({ navigation }) => {
             <TouchableOpacity
               key={cat.value}
               style={[styles.chip, categoria === cat.value && { backgroundColor: cat.cor, borderColor: cat.cor }]}
-              onPress={() => setCategoria(cat.value)}
+              onPress={() => handleChangeCategoria(cat.value)}
               disabled={salvando}
             >
               <Text style={styles.chipIcon}>{cat.icon}</Text>
               <Text style={[styles.chipLabel, categoria === cat.value && { color: '#fff' }]}>{cat.label}</Text>
             </TouchableOpacity>
           ))}
+        </View>
+
+        <Text style={styles.sectionTitle}>Tipo de Gasto (50/30/20)</Text>
+        <View style={styles.typeGastoContainer}>
+          {['essencial', 'desejo', 'poupar'].map((tipo) => {
+            const labels = {
+              essencial: '💰 Essencial (50%)',
+              desejo: '🎉 Desejo (30%)',
+              poupar: '🏦 Poupar (20%)',
+            };
+            return (
+              <TouchableOpacity
+                key={tipo}
+                style={[
+                  styles.typeGastoBtn,
+                  tipoGasto === tipo && { backgroundColor: '#6C5CE7', borderColor: '#6C5CE7' }
+                ]}
+                onPress={() => setTipoGasto(tipo)}
+                disabled={salvando}
+              >
+                <Text
+                  style={[
+                    styles.typeGastoLabel,
+                    tipoGasto === tipo && { color: '#fff', fontWeight: '700' }
+                  ]}
+                >
+                  {labels[tipo]}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         <Text style={styles.sectionTitle}>Forma de Pagamento</Text>
@@ -223,6 +261,12 @@ const styles = StyleSheet.create({
   recBtnActive: { backgroundColor: '#6C5CE7', borderColor: '#6C5CE7' },
   recLabel: { fontSize: 13, color: '#636E72', fontWeight: '500' },
   recLabelActive: { color: '#fff' },
+  typeGastoContainer: { flexDirection: 'column', gap: 10 },
+  typeGastoBtn: {
+    backgroundColor: '#fff', borderRadius: 12, paddingVertical: 12, paddingHorizontal: 16,
+    borderWidth: 1.5, borderColor: '#DFE6E9', alignItems: 'center',
+  },
+  typeGastoLabel: { fontSize: 14, color: '#636E72', fontWeight: '600' },
   saveBtn: {
     backgroundColor: '#6C5CE7', borderRadius: 16, padding: 16,
     alignItems: 'center', marginTop: 28,

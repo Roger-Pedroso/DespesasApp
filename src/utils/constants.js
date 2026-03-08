@@ -10,6 +10,19 @@ export const CATEGORIAS = [
   { label: 'Outros', value: 'outros', icon: '💰', cor: '#B2BEC3' },
 ];
 
+// Mapeamento de categoria para tipo de gasto (50/30/20)
+export const CATEGORIA_TIPO_GASTO = {
+  'moradia': 'essencial',       // Essencial
+  'alimentacao': 'essencial',   // Essencial
+  'transporte': 'essencial',    // Essencial
+  'saude': 'essencial',         // Essencial
+  'educacao': 'essencial',      // Essencial
+  'lazer': 'desejo',            // Desejos
+  'assinaturas': 'desejo',      // Desejos
+  'vestuario': 'desejo',        // Desejos
+  'outros': 'essencial',        // Padrão: Essencial
+};
+
 export const RECORRENCIAS = [
   { label: 'Única', value: 'unica' },
   { label: 'Diária', value: 'diaria' },
@@ -34,6 +47,9 @@ export const getCategoriaInfo = (value) =>
 
 export const getFormaPagamentoInfo = (value) =>
   FORMAS_PAGAMENTO.find((f) => f.value === value) || FORMAS_PAGAMENTO[0];
+
+export const getTipoGastoFromCategoria = (categoria) =>
+  CATEGORIA_TIPO_GASTO[categoria] || 'essencial';
 
 export const formatarMoeda = (valor) =>
   valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });

@@ -23,6 +23,7 @@ export const initDatabase = async () => {
         descricao TEXT NOT NULL CHECK(length(descricao) > 0),
         valor REAL NOT NULL CHECK(valor > 0),
         categoria TEXT NOT NULL,
+        tipo_gasto TEXT NOT NULL DEFAULT 'essencial' CHECK(tipo_gasto IN ('essencial', 'desejo', 'poupar')),
         recorrencia TEXT NOT NULL DEFAULT 'unica',
         forma_pagamento TEXT NOT NULL DEFAULT 'debito',
         data TEXT NOT NULL,
@@ -52,6 +53,7 @@ export const initDatabase = async () => {
       
       CREATE INDEX IF NOT EXISTS idx_despesas_mes_ano ON despesas(mes, ano);
       CREATE INDEX IF NOT EXISTS idx_despesas_categoria ON despesas(categoria);
+      CREATE INDEX IF NOT EXISTS idx_despesas_tipo_gasto ON despesas(tipo_gasto);
       CREATE INDEX IF NOT EXISTS idx_despesas_forma_pagamento ON despesas(forma_pagamento);
       CREATE INDEX IF NOT EXISTS idx_despesas_recorrencia ON despesas(recorrencia);
       CREATE INDEX IF NOT EXISTS idx_despesas_data ON despesas(data);
@@ -77,7 +79,7 @@ export const inserirDespesa = async (despesa) => {
     }
 
     const database = await getDatabase();
-    const { descricao, valor, categoria, recorrencia, forma_pagamento, data } = despesa;
+    const { descricao, valor, categoria, tipo_gasto, recorrencia, forma_pagamento, data } = despesa;
     
     // Sanitizar descrição
     const descricaoSanitizada = sanitizarDescricao(descricao);
@@ -93,9 +95,9 @@ export const inserirDespesa = async (despesa) => {
     const ano = dateObj.getFullYear();
 
     const result = await database.runAsync(
-      `INSERT INTO despesas (descricao, valor, categoria, recorrencia, forma_pagamento, data, mes, ano)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [descricaoSanitizada, valor, categoria, recorrencia, forma_pagamento, data, mes, ano]
+      `INSERT INTO despesas (descricao, valor, categoria, tipo_gasto, recorrencia, forma_pagamento, data, mes, ano)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [descricaoSanitizada, valor, categoria, tipo_gasto || 'essencial', recorrencia, forma_pagamento, data, mes, ano]
     );
 
     console.log('[DATABASE] ✅ Despesa inserida:', result.lastInsertRowId);
