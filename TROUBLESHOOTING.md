@@ -60,7 +60,37 @@ npm start -- --reset-cache
 
 ---
 
-### **Opção 3: Limpar Cache do Android (Última Opção)**
+### **Opção 3: Limpar Dados do App (Banco de Dados)**
+
+Se há erro de schema de banco de dados (ex: "no such column"):
+
+```bash
+# 1. Parar o Metro (Ctrl+C)
+
+# 2. Limpar dados do app via Settings
+# Abra as Configurações do Android
+# Vá para: Aplicativos → Aplicativos → DespesasApp → Armazenamento e cache
+# Pressione "Limpar dados" ou "Clear Data"
+
+# 3. Abrir o app novamente
+# O banco será recriado com schema completo
+```
+
+**OU via adb:**
+
+```bash
+# 1. Parar o Metro (Ctrl+C)
+
+# 2. Usar adb para limpar dados
+adb shell pm clear com.despesasapp
+
+# 3. Reinstalar app
+npm run android -- --reset-cache
+```
+
+---
+
+### **Opção 4: Limpar Cache do Android (Última Opção)**
 
 Se ainda não funcionar:
 
@@ -86,18 +116,18 @@ Após executar a limpeza:
 
 1. **Procurar por novas features:**
    - Tente acessar dados de Busca/Dashboard
-   - Verifique se templates aparecem
+   - Verifique se a aba "💳 Alocação" aparece
 
 2. **Verificar logs:**
    ```
    Abra DevTools (React Native)
-   Vejo novos imports? (search.js, insights.js, etc)
+   Vejo novos imports? (allocation.js, BudgetAllocationScreen.js, etc)
    ```
 
 3. **Verificar BD:**
    - Abra o app
-   - Vá para uma tela que usa templates/dashboard
-   - Deve funcionar sem erros
+   - Vá para a aba Alocação
+   - Deveria funcionar sem erros de "no such column"
 
 ---
 
@@ -123,16 +153,20 @@ Após executar a limpeza:
    - Tente uninstalar e reinstalar o app no Android
    - Ou criar novo device Android Virtual
 
+4. **Para problemas de schema (Opção 3):**
+   - Use quando receber erros como "no such column: tipo_gasto"
+   - Limpar dados recria o banco do zero
+
 ---
 
 ## 🎯 Resumo Rápido
 
 ```
-Problema:     App mostra versão antiga
-Causa:        Cache do Metro Bundler
+Problema:     App mostra versão antiga / erros de banco
+Causa:        Cache do Metro Bundler / schema desatualizado
 Solução:      npm start -- --reset-cache
 Tempo:        2-3 minutos
-Resultado:    App com Fase 2 pronto ✅
+Resultado:    App com Fase 4 pronto ✅
 ```
 
 ---
