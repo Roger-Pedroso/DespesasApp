@@ -53,7 +53,6 @@ export const initDatabase = async () => {
       
       CREATE INDEX IF NOT EXISTS idx_despesas_mes_ano ON despesas(mes, ano);
       CREATE INDEX IF NOT EXISTS idx_despesas_categoria ON despesas(categoria);
-      CREATE INDEX IF NOT EXISTS idx_despesas_tipo_gasto ON despesas(tipo_gasto);
       CREATE INDEX IF NOT EXISTS idx_despesas_forma_pagamento ON despesas(forma_pagamento);
       CREATE INDEX IF NOT EXISTS idx_despesas_recorrencia ON despesas(recorrencia);
       CREATE INDEX IF NOT EXISTS idx_despesas_data ON despesas(data);
@@ -63,15 +62,21 @@ export const initDatabase = async () => {
     
     // Migration: add tipo_gasto column if it doesn't exist
     try {
-      await database.execAsync(`
-        ALTER TABLE despesas ADD COLUMN tipo_gasto TEXT NOT NULL DEFAULT 'essencial' CHECK(tipo_gasto IN ('essencial', 'desejo', 'poupar'));
-      `);
-      console.log('[DATABASE] ✅ Migration: added tipo_gasto column');
-    } catch (migrationError) {
-      // Column already exists - this is expected on subsequent app runs
-      if (!migrationError.message.includes('duplicate column')) {
-        throw migrationError;
+      const result = await database.getAllAsync(`PRAGMA table_info(despesas)`);
+      const tipoGastoExists = result.some(col => col.name === 'tipo_gasto');
+      
+      if (!tipoGastoExists) {
+        await database.execAsync(`
+          ALTER TABLE despesas ADD COLUMN tipo_gasto TEXT NOT NULL DEFAULT 'essencial' CHECK(tipo_gasto IN ('essencial', 'desejo', 'poupar'));
+          CREATE INDEX IF NOT EXISTS idx_despesas_tipo_gasto ON despesas(tipo_gasto);
+        `);
+        console.log('[DATABASE] ✅ Migration: added tipo_gasto column');
+      } else {
+        console.log('[DATABASE] ✅ tipo_gasto column already exists');
       }
+    } catch (migrationError) {
+      logError(migrationError, { action: 'migration-tipo_gasto' });
+      throw migrationError;
     }
     
     console.log('[DATABASE] ✅ Database initialized successfully');
