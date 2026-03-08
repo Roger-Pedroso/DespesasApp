@@ -206,7 +206,7 @@ const SearchScreen = () => {
           renderItem={renderExpenseItem}
           style={styles.list}
           ListEmptyComponent={
-            !loading && (
+            !loadingBusca && (
               <View style={styles.emptyState}>
                 <Text style={styles.emptyStateText}>
                   Nenhuma despesa encontrada

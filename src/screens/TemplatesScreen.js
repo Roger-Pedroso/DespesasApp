@@ -5,26 +5,27 @@ import { useTemplates } from '../utils/useTemplates';
 const TemplatesScreen = ({ navigation }) => {
   const { templates, loadingTemplates, carregarTemplates, adicionarTemplate, removerTemplate } = useTemplates();
   const [showModal, setShowModal] = useState(false);
-  const [newTemplate, setNewTemplate] = useState({ descricao: '', categoria: '', valor: '', forma_pagamento: 'Cartão' });
+  const [newTemplate, setNewTemplate] = useState({ nome: '', categoria: '', valor: '', forma_pagamento: 'Cartão' });
 
   React.useEffect(() => {
     carregarTemplates();
-  }, []);
+  }, [carregarTemplates]);
 
   const handleCreate = async () => {
-    if (!newTemplate.descricao || !newTemplate.categoria || !newTemplate.valor) {
+    if (!newTemplate.nome || !newTemplate.categoria || !newTemplate.valor) {
       Alert.alert('Preencha os campos');
       return;
     }
     try {
       await adicionarTemplate({
-        descricao: newTemplate.descricao,
+        nome: newTemplate.nome,
+        descricao: newTemplate.nome,
         categoria: newTemplate.categoria,
         valor: parseFloat(newTemplate.valor),
         forma_pagamento: newTemplate.forma_pagamento,
       });
       Alert.alert('Criado com sucesso!');
-      setNewTemplate({ descricao: '', categoria: '', valor: '', forma_pagamento: 'Cartão' });
+      setNewTemplate({ nome: '', categoria: '', valor: '', forma_pagamento: 'Cartão' });
       setShowModal(false);
     } catch (error) {
       Alert.alert('Erro ao criar template');
@@ -103,7 +104,7 @@ const TemplatesScreen = ({ navigation }) => {
               </TouchableOpacity>
             </View>
             <ScrollView>
-              <TextInput style={styles.input} placeholder="Descrição" value={newTemplate.descricao} onChangeText={(text) => setNewTemplate({ ...newTemplate, descricao: text })} />
+              <TextInput style={styles.input} placeholder="Nome do Template" value={newTemplate.nome} onChangeText={(text) => setNewTemplate({ ...newTemplate, nome: text })} />
               <TextInput style={styles.input} placeholder="Categoria" value={newTemplate.categoria} onChangeText={(text) => setNewTemplate({ ...newTemplate, categoria: text })} />
               <TextInput style={styles.input} placeholder="Valor" value={newTemplate.valor} onChangeText={(text) => setNewTemplate({ ...newTemplate, valor: text })} keyboardType="decimal-pad" />
               <View style={{ flexDirection: 'row', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>

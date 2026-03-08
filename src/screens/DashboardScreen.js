@@ -34,7 +34,9 @@ const DashboardScreen = () => {
   const renderTrendChart = () => {
     if (!trends || trends.length === 0) return null;
 
-    const maxValue = Math.max(...trends.map((t) => t.total));
+    const maxValue = Math.max(...trends.map((t) => t.total || 0));
+    if (!maxValue || maxValue === 0) return null;
+    
     const screenWidth = Dimensions.get('window').width - 32;
     const barWidth = screenWidth / 12 - 8;
 
@@ -54,12 +56,12 @@ const DashboardScreen = () => {
                     },
                   ]}
                 />
-                <Text style={styles.barLabel}>{trend.mes_ano.slice(-2)}</Text>
+                <Text style={styles.barLabel}>{trend.mes_ano ? trend.mes_ano.slice(-2) : ''}</Text>
               </View>
             ))}
           </View>
           <Text style={styles.chartNote}>
-            Máximo: R$ {maxValue.toFixed(2).replace('.', ',')}
+            Máximo: R$ {(maxValue || 0).toFixed(2).replace('.', ',')}
           </Text>
         </View>
       </View>
@@ -69,10 +71,10 @@ const DashboardScreen = () => {
   const renderComparison = () => {
     if (!comparison) return null;
 
-    const variance = comparison.mes_atual - comparison.mes_anterior;
-    const percentageChange = (
-      (variance / comparison.mes_anterior) * 100
-    ).toFixed(1);
+    const mes_atual = comparison.mes_atual || 0;
+    const mes_anterior = comparison.mes_anterior || 0;
+    const variance = mes_atual - mes_anterior;
+    const percentageChange = mes_anterior > 0 ? ((variance / mes_anterior) * 100).toFixed(1) : 0;
     const trend = variance > 0 ? '📈 Aumento' : '📉 Redução';
     const trendColor = variance > 0 ? '#FF4757' : '#2ED573';
 
@@ -84,13 +86,13 @@ const DashboardScreen = () => {
           <View style={styles.comparisonCard}>
             <Text style={styles.comparisonLabel}>Mês Atual</Text>
             <Text style={styles.comparisonValue}>
-              R$ {comparison.mes_atual.toFixed(2).replace('.', ',')}
+              R$ {(mes_atual || 0).toFixed(2).replace('.', ',')}
             </Text>
           </View>
           <View style={[styles.comparisonCard, styles.comparisonCardAlt]}>
             <Text style={styles.comparisonLabel}>Mês Anterior</Text>
             <Text style={styles.comparisonValue}>
-              R$ {comparison.mes_anterior.toFixed(2).replace('.', ',')}
+              R$ {(mes_anterior || 0).toFixed(2).replace('.', ',')}
             </Text>
           </View>
         </View>
@@ -111,18 +113,19 @@ const DashboardScreen = () => {
   const renderTopCategories = () => {
     if (!topCategories || topCategories.length === 0) return null;
 
-    const total = topCategories.reduce((sum, cat) => sum + cat.total, 0);
+    const total = topCategories.reduce((sum, cat) => sum + (cat.total || 0), 0);
+    if (total === 0) return null;
 
     return (
       <View style={styles.categoriesContainer}>
         <Text style={styles.chartTitle}>🏷️ Top 5 Categorias</Text>
 
         {topCategories.map((category, idx) => {
-          const percentage = ((category.total / total) * 100).toFixed(1);
+          const percentage = ((((category.total || 0) / total) * 100) || 0).toFixed(1);
           return (
             <View key={idx} style={styles.categoryRow}>
               <View style={styles.categoryInfo}>
-                <Text style={styles.categoryName}>{category.categoria}</Text>
+                <Text style={styles.categoryName}>{category.categoria || 'N/A'}</Text>
                 <View style={styles.progressBar}>
                   <View
                     style={[
@@ -133,14 +136,14 @@ const DashboardScreen = () => {
                 </View>
               </View>
               <Text style={styles.categoryValue}>
-                R$ {category.total.toFixed(2).replace('.', ',')}
+                R$ {(category.total || 0).toFixed(2).replace('.', ',')}
               </Text>
             </View>
           );
         })}
 
         <Text style={styles.totalText}>
-          Total: R$ {total.toFixed(2).replace('.', ',')}
+          Total: R$ {(total || 0).toFixed(2).replace('.', ',')}
         </Text>
       </View>
     );
@@ -149,9 +152,10 @@ const DashboardScreen = () => {
   const renderForecast = () => {
     if (!forecast) return null;
 
+    const totalMesAtual = forecast.total_mes_atual || 0;
     const daysRemaining = 30 - new Date().getDate();
-    const dailyAverage = (forecast.total_mes_atual / new Date().getDate()).toFixed(2);
-    const projected = (dailyAverage * 30).toFixed(2);
+    const dailyAverage = ((totalMesAtual / Math.max(new Date().getDate(), 1)) || 0).toFixed(2);
+    const projected = (parseFloat(dailyAverage) * 30).toFixed(2);
 
     return (
       <View style={styles.forecastContainer}>
@@ -161,14 +165,14 @@ const DashboardScreen = () => {
           <View style={styles.forecastCard}>
             <Text style={styles.forecastLabel}>Gasto Atual</Text>
             <Text style={styles.forecastValue}>
-              R$ {forecast.total_mes_atual.toFixed(2).replace('.', ',')}
+              R$ {(totalMesAtual || 0).toFixed(2).replace('.', ',')}
             </Text>
           </View>
 
           <View style={styles.forecastCard}>
             <Text style={styles.forecastLabel}>Projeção Final</Text>
             <Text style={styles.forecastValue}>
-              R$ {projected.replace('.', ',')}
+              R$ {(projected || '0').toString().replace('.', ',')}
             </Text>
           </View>
 
@@ -179,7 +183,7 @@ const DashboardScreen = () => {
         </View>
 
         <Text style={styles.forecastNote}>
-          Média diária: R$ {dailyAverage.replace('.', ',')}
+          Média diária: R$ {(dailyAverage || '0').toString().replace('.', ',')}
         </Text>
       </View>
     );
