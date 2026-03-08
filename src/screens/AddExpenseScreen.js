@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, TextInput, TouchableOpacity,
   ScrollView, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { useExpensas } from '../context/ExpensasContext';
 import { CATEGORIAS, RECORRENCIAS, FORMAS_PAGAMENTO } from '../utils/constants';
+import { isValidDate, isValidBRL, isValidDescricao } from '../utils/validators';
+import { handleError } from '../utils/errorHandler';
 
 const AddExpenseScreen = ({ navigation }) => {
   const { adicionarDespesa } = useExpensas();
@@ -18,6 +20,7 @@ const AddExpenseScreen = ({ navigation }) => {
     return hoje.toISOString().split('T')[0];
   });
   const [salvando, setSalvando] = useState(false);
+  const [lastSaveTime, setLastSaveTime] = useState(0);
 
   const formatarData = (text) => {
     const nums = text.replace(/\D/g, '');
@@ -28,7 +31,12 @@ const AddExpenseScreen = ({ navigation }) => {
 
   const dataDisplayToISO = (display) => {
     const parts = display.split('/');
-    if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    if (parts.length === 3) {
+      const dia = parts[0].padStart(2, '0');
+      const mes = parts[1].padStart(2, '0');
+      const ano = parts[2];
+      return `${ano}-${mes}-${dia}`;
+    }
     return data;
   };
 
@@ -40,23 +48,62 @@ const AddExpenseScreen = ({ navigation }) => {
     return `${d}/${m}/${y}`;
   });
 
-  const salvar = async () => {
-    if (!descricao.trim()) return Alert.alert('Atenção', 'Informe a descrição.');
-    const valorNum = parseFloat(valor.replace(',', '.'));
-    if (isNaN(valorNum) || valorNum <= 0) return Alert.alert('Atenção', 'Informe um valor válido.');
-    const isoData = dataDisplayToISO(dataDisplay);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(isoData)) return Alert.alert('Atenção', 'Data inválida. Use DD/MM/AAAA.');
+  const salvar = useCallback(async () => {
+    // Prevenir double-tap (ignorar cliques dentro de 1 segundo)
+    const now = Date.now();
+    if (lastSaveTime && now - lastSaveTime < 1000) {
+      return;
+    }
 
+    // Validar descrição
+    if (!isValidDescricao(descricao)) {
+      return Alert.alert('Descrição inválida', 'A descrição deve ter entre 1 e 255 caracteres.');
+    }
+
+    // Validar valor
+    const valorNum = parseFloat(valor.replace(',', '.'));
+    if (!isValidBRL(valorNum)) {
+      return Alert.alert('Valor inválido', 'Informe um valor válido (até R$ 999.999,99).');
+    }
+
+    // Validar data
+    const isoData = dataDisplayToISO(dataDisplay);
+    if (!isValidDate(isoData)) {
+      return Alert.alert('Data inválida', 'Use o formato DD/MM/AAAA com uma data válida.');
+    }
+
+    setLastSaveTime(now);
     setSalvando(true);
+
     try {
-      await adicionarDespesa({ descricao: descricao.trim(), valor: valorNum, categoria, recorrencia, forma_pagamento: formaPagamento, data: isoData });
-      navigation.goBack();
-    } catch (e) {
-      Alert.alert('Erro', 'Não foi possível salvar a despesa.');
+      const despesa = {
+        descricao: descricao.trim(),
+        valor: valorNum,
+        categoria,
+        recorrencia,
+        forma_pagamento: formaPagamento,
+        data: isoData,
+      };
+
+      await adicionarDespesa(despesa);
+
+      // Limpar formulário e voltar
+      Alert.alert('Sucesso', 'Despesa adicionada!', [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+    } catch (error) {
+      const handled = handleError(error, 'AddExpenseScreen.salvar');
+      Alert.alert(
+        'Erro ao salvar',
+        handled.userMessage || 'Não foi possível salvar a despesa. Tente novamente.'
+      );
     } finally {
       setSalvando(false);
     }
-  };
+  }, [descricao, valor, categoria, recorrencia, formaPagamento, dataDisplay, lastSaveTime, navigation, adicionarDespesa, data]);
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -67,7 +114,8 @@ const AddExpenseScreen = ({ navigation }) => {
           placeholder="Ex: Almoço, Academia..."
           value={descricao}
           onChangeText={setDescricao}
-          maxLength={60}
+          maxLength={255}
+          editable={!salvando}
         />
 
         <Text style={styles.sectionTitle}>Valor (R$)</Text>
@@ -76,7 +124,8 @@ const AddExpenseScreen = ({ navigation }) => {
           placeholder="0,00"
           value={valor}
           onChangeText={setValor}
-          keyboardType="numeric"
+          keyboardType="decimal-pad"
+          editable={!salvando}
         />
 
         <Text style={styles.sectionTitle}>Data</Text>
@@ -87,6 +136,7 @@ const AddExpenseScreen = ({ navigation }) => {
           onChangeText={(t) => setDataDisplay(formatarData(t))}
           keyboardType="numeric"
           maxLength={10}
+          editable={!salvando}
         />
 
         <Text style={styles.sectionTitle}>Categoria</Text>
@@ -96,6 +146,7 @@ const AddExpenseScreen = ({ navigation }) => {
               key={cat.value}
               style={[styles.chip, categoria === cat.value && { backgroundColor: cat.cor, borderColor: cat.cor }]}
               onPress={() => setCategoria(cat.value)}
+              disabled={salvando}
             >
               <Text style={styles.chipIcon}>{cat.icon}</Text>
               <Text style={[styles.chipLabel, categoria === cat.value && { color: '#fff' }]}>{cat.label}</Text>
@@ -110,6 +161,7 @@ const AddExpenseScreen = ({ navigation }) => {
               key={fp.value}
               style={[styles.payBtn, formaPagamento === fp.value && { backgroundColor: fp.cor, borderColor: fp.cor }]}
               onPress={() => setFormaPagamento(fp.value)}
+              disabled={salvando}
             >
               <Text style={styles.payIcon}>{fp.icon}</Text>
               <Text style={[styles.payLabel, formaPagamento === fp.value && { color: '#fff' }]}>{fp.label}</Text>
@@ -124,6 +176,7 @@ const AddExpenseScreen = ({ navigation }) => {
               key={rec.value}
               style={[styles.recBtn, recorrencia === rec.value && styles.recBtnActive]}
               onPress={() => setRecorrencia(rec.value)}
+              disabled={salvando}
             >
               <Text style={[styles.recLabel, recorrencia === rec.value && styles.recLabelActive]}>{rec.label}</Text>
             </TouchableOpacity>

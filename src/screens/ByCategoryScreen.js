@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { useExpensas } from '../context/ExpensasContext';
 import { formatarMoeda, MESES } from '../utils/constants';
+import { useMonthNavigation } from '../utils/useMonthNavigation';
 import CategoryCard from '../components/CategoryCard';
 import MonthSelector from '../components/MonthSelector';
 
@@ -13,22 +14,20 @@ const ByCategoryScreen = ({ navigation }) => {
     loading, totalMes, carregarDados, trocarMes,
   } = useExpensas();
 
+  const { irParaMesAnterior, irParaProximoMes } = useMonthNavigation(
+    mesSelecionado,
+    anoSelecionado,
+    trocarMes,
+  );
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       carregarDados(mesSelecionado, anoSelecionado);
     });
-    return unsubscribe;
-  }, [navigation, mesSelecionado, anoSelecionado]);
-
-  const irParaMesAnterior = () => {
-    if (mesSelecionado === 1) trocarMes(12, anoSelecionado - 1);
-    else trocarMes(mesSelecionado - 1, anoSelecionado);
-  };
-
-  const irParaProximoMes = () => {
-    if (mesSelecionado === 12) trocarMes(1, anoSelecionado + 1);
-    else trocarMes(mesSelecionado + 1, anoSelecionado);
-  };
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [navigation, carregarDados, mesSelecionado, anoSelecionado]);
 
   return (
     <View style={styles.container}>

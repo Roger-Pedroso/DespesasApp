@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { useExpensas } from '../context/ExpensasContext';
 import { formatarMoeda, MESES, getFormaPagamentoInfo } from '../utils/constants';
+import { useMonthNavigation } from '../utils/useMonthNavigation';
 import MonthSelector from '../components/MonthSelector';
 
 const MonthlySummaryScreen = ({ navigation }) => {
@@ -12,22 +13,20 @@ const MonthlySummaryScreen = ({ navigation }) => {
     loading, totalMes, carregarDados, trocarMes,
   } = useExpensas();
 
+  const { irParaMesAnterior, irParaProximoMes } = useMonthNavigation(
+    mesSelecionado,
+    anoSelecionado,
+    trocarMes,
+  );
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       carregarDados(mesSelecionado, anoSelecionado);
     });
-    return unsubscribe;
-  }, [navigation, mesSelecionado, anoSelecionado]);
-
-  const irParaMesAnterior = () => {
-    if (mesSelecionado === 1) trocarMes(12, anoSelecionado - 1);
-    else trocarMes(mesSelecionado - 1, anoSelecionado);
-  };
-
-  const irParaProximoMes = () => {
-    if (mesSelecionado === 12) trocarMes(1, anoSelecionado + 1);
-    else trocarMes(mesSelecionado + 1, anoSelecionado);
-  };
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [navigation, carregarDados, mesSelecionado, anoSelecionado]);
 
   const mediaGastos = despesas.length > 0 ? totalMes / despesas.length : 0;
   const maiorDespesa = despesas.reduce((max, d) => d.valor > max ? d.valor : max, 0);

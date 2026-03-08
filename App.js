@@ -12,6 +12,10 @@ import HomeScreen from './src/screens/HomeScreen';
 import AddExpenseScreen from './src/screens/AddExpenseScreen';
 import MonthlySummaryScreen from './src/screens/MonthlySummaryScreen';
 import ByCategoryScreen from './src/screens/ByCategoryScreen';
+import SearchScreen from './src/screens/SearchScreen';
+import TemplatesScreen from './src/screens/TemplatesScreen';
+import DashboardScreen from './src/screens/DashboardScreen';
+import BudgetsScreen from './src/screens/BudgetsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -53,6 +57,54 @@ const CategoryStack = () => (
   </Stack.Navigator>
 );
 
+const SearchStack = () => (
+  <Stack.Navigator
+    screenOptions={{
+      headerStyle: { backgroundColor: '#6C5CE7', elevation: 0, shadowOpacity: 0 },
+      headerTintColor: '#fff',
+      headerTitleStyle: { fontWeight: '700' },
+    }}
+  >
+    <Stack.Screen name="Search" component={SearchScreen} options={{ title: 'Buscar Despesas' }} />
+  </Stack.Navigator>
+);
+
+const TemplatesStack = () => (
+  <Stack.Navigator
+    screenOptions={{
+      headerStyle: { backgroundColor: '#6C5CE7', elevation: 0, shadowOpacity: 0 },
+      headerTintColor: '#fff',
+      headerTitleStyle: { fontWeight: '700' },
+    }}
+  >
+    <Stack.Screen name="Templates" component={TemplatesScreen} options={{ title: 'Templates' }} />
+  </Stack.Navigator>
+);
+
+const DashboardStack = () => (
+  <Stack.Navigator
+    screenOptions={{
+      headerStyle: { backgroundColor: '#6C5CE7', elevation: 0, shadowOpacity: 0 },
+      headerTintColor: '#fff',
+      headerTitleStyle: { fontWeight: '700' },
+    }}
+  >
+    <Stack.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Dashboard' }} />
+  </Stack.Navigator>
+);
+
+const BudgetsStack = () => (
+  <Stack.Navigator
+    screenOptions={{
+      headerStyle: { backgroundColor: '#6C5CE7', elevation: 0, shadowOpacity: 0 },
+      headerTintColor: '#fff',
+      headerTitleStyle: { fontWeight: '700' },
+    }}
+  >
+    <Stack.Screen name="Budgets" component={BudgetsScreen} options={{ title: 'Orçamentos' }} />
+  </Stack.Navigator>
+);
+
 const TabNavigator = () => {
   const insets = useSafeAreaInsets();
   return (
@@ -72,17 +124,23 @@ const TabNavigator = () => {
         tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
         tabBarIcon: ({ focused, color }) => {
           const icons = {
-            HomeTab: focused ? '🏠' : '🏠',
-            SummaryTab: focused ? '📊' : '📊',
-            CategoryTab: focused ? '🏷️' : '🏷️',
+            HomeTab: '🏠',
+            SummaryTab: '📊',
+            CategoryTab: '🏷️',
+            SearchTab: '🔍',
+            TemplatesTab: '📋',
+            DashboardTab: '📈',
+            BudgetsTab: '💰',
           };
-          return <Text style={{ fontSize: 22 }}>{icons[route.name]}</Text>;
+          return <Text style={{ fontSize: 20 }}>{icons[route.name]}</Text>;
         },
       })}
     >
       <Tab.Screen name="HomeTab" component={HomeStack} options={{ title: 'Início' }} />
-      <Tab.Screen name="SummaryTab" component={SummaryStack} options={{ title: 'Resumo' }} />
-      <Tab.Screen name="CategoryTab" component={CategoryStack} options={{ title: 'Categorias' }} />
+      <Tab.Screen name="SearchTab" component={SearchStack} options={{ title: 'Buscar' }} />
+      <Tab.Screen name="TemplatesTab" component={TemplatesStack} options={{ title: 'Templates' }} />
+      <Tab.Screen name="DashboardTab" component={DashboardStack} options={{ title: 'Dashboard' }} />
+      <Tab.Screen name="BudgetsTab" component={BudgetsStack} options={{ title: 'Orçamentos' }} />
     </Tab.Navigator>
   );
 };

@@ -5,6 +5,8 @@ import {
 } from 'react-native';
 import { useExpensas } from '../context/ExpensasContext';
 import { formatarMoeda, MESES } from '../utils/constants';
+import { useMonthNavigation } from '../utils/useMonthNavigation';
+import { COLORS, SHADOW, SPACING, BORDER_RADIUS, TYPOGRAPHY } from '../utils/theme';
 import ExpenseItem from '../components/ExpenseItem';
 import MonthSelector from '../components/MonthSelector';
 
@@ -14,28 +16,20 @@ const HomeScreen = ({ navigation }) => {
     totalMes, carregarDados, removerDespesa, trocarMes,
   } = useExpensas();
 
+  const { irParaMesAnterior, irParaProximoMes } = useMonthNavigation(
+    mesSelecionado,
+    anoSelecionado,
+    trocarMes,
+  );
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       carregarDados(mesSelecionado, anoSelecionado);
     });
-    return unsubscribe;
-  }, [navigation, mesSelecionado, anoSelecionado]);
-
-  const irParaMesAnterior = () => {
-    if (mesSelecionado === 1) {
-      trocarMes(12, anoSelecionado - 1);
-    } else {
-      trocarMes(mesSelecionado - 1, anoSelecionado);
-    }
-  };
-
-  const irParaProximoMes = () => {
-    if (mesSelecionado === 12) {
-      trocarMes(1, anoSelecionado + 1);
-    } else {
-      trocarMes(mesSelecionado + 1, anoSelecionado);
-    }
-  };
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [navigation, carregarDados, mesSelecionado, anoSelecionado]);
 
   const confirmarDelete = (id) => {
     Alert.alert('Excluir despesa', 'Deseja excluir esta despesa?', [
@@ -98,40 +92,41 @@ const HomeScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F6FA' },
+  container: { flex: 1, backgroundColor: COLORS.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.lg,
+    paddingBottom: SPACING.sm,
   },
-  titulo: { fontSize: 24, fontWeight: '800', color: '#2D3436' },
+  titulo: { fontSize: 24, fontWeight: '800', color: COLORS.text },
   addBtn: {
-    backgroundColor: '#6C5CE7',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    backgroundColor: COLORS.primary,
+    borderRadius: BORDER_RADIUS.xl,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.sm,
   },
-  addBtnText: { color: '#fff', fontWeight: '700', fontSize: 14 },
+  addBtnText: { color: COLORS.textInverse, fontWeight: '700', fontSize: 14 },
   totalCard: {
-    backgroundColor: '#6C5CE7',
-    marginHorizontal: 16,
-    marginVertical: 6,
-    borderRadius: 16,
-    padding: 20,
+    backgroundColor: COLORS.primary,
+    marginHorizontal: SPACING.lg,
+    marginVertical: SPACING.sm,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.xl,
     alignItems: 'center',
+    ...SHADOW.md,
   },
-  totalLabel: { color: '#DFE6E9', fontSize: 13, marginBottom: 4 },
-  totalValor: { color: '#fff', fontSize: 32, fontWeight: '800' },
-  totalQtd: { color: '#DFE6E9', fontSize: 13, marginTop: 4 },
+  totalLabel: { color: COLORS.border, fontSize: 13, marginBottom: SPACING.sm },
+  totalValor: { color: COLORS.textInverse, fontSize: 32, fontWeight: '800' },
+  totalQtd: { color: COLORS.border, fontSize: 13, marginTop: SPACING.sm },
   loading: { marginTop: 40 },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingBottom: 60 },
-  emptyIcon: { fontSize: 56, marginBottom: 12 },
-  emptyText: { fontSize: 16, color: '#B2BEC3', marginBottom: 20 },
-  emptyBtn: { backgroundColor: '#6C5CE7', borderRadius: 12, paddingHorizontal: 24, paddingVertical: 12 },
-  emptyBtnText: { color: '#fff', fontWeight: '700' },
+  emptyIcon: { fontSize: 56, marginBottom: SPACING.lg },
+  emptyText: { fontSize: 16, color: COLORS.textTertiary, marginBottom: SPACING.xl },
+  emptyBtn: { backgroundColor: COLORS.primary, borderRadius: BORDER_RADIUS.md, paddingHorizontal: SPACING.xl, paddingVertical: SPACING.lg },
+  emptyBtnText: { color: COLORS.textInverse, fontWeight: '700' },
   list: { paddingBottom: 20 },
 });
 

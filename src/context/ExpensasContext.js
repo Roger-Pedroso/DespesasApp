@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import {
   buscarDespesasPorMes,
   buscarDespesasPorCategoria,
@@ -7,6 +8,7 @@ import {
   deletarDespesa,
   propagarRecorrencias,
 } from '../database/database';
+import { CATEGORIAS } from '../utils/constants';
 
 const ExpensasContext = createContext();
 
@@ -49,30 +51,41 @@ export const ExpensasProvider = ({ children }) => {
     setMesSelecionado(mes);
     setAnoSelecionado(ano);
     await propagarRecorrencias(mes, ano);
-    carregarDados(mes, ano);
+    await carregarDados(mes, ano);
   };
 
   const totalMes = despesas.reduce((acc, d) => acc + d.valor, 0);
 
+  const value = {
+    mesSelecionado,
+    anoSelecionado,
+    despesas,
+    porCategoria,
+    porFormaPagamento,
+    loading,
+    totalMes,
+    categorias: CATEGORIAS.map(c => c.value),
+    carregarDados,
+    adicionarDespesa,
+    removerDespesa,
+    trocarMes,
+  };
+
   return (
-    <ExpensasContext.Provider
-      value={{
-        mesSelecionado,
-        anoSelecionado,
-        despesas,
-        porCategoria,
-        porFormaPagamento,
-        loading,
-        totalMes,
-        carregarDados,
-        adicionarDespesa,
-        removerDespesa,
-        trocarMes,
-      }}
-    >
+    <ExpensasContext.Provider value={value}>
       {children}
     </ExpensasContext.Provider>
   );
 };
 
-export const useExpensas = () => useContext(ExpensasContext);
+ExpensasProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+export const useExpensas = () => {
+  const context = useContext(ExpensasContext);
+  if (!context) {
+    throw new Error('useExpensas deve ser usado dentro de ExpensasProvider');
+  }
+  return context;
+};
