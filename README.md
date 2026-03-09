@@ -289,3 +289,11 @@ Para issues ou perguntas, ver:
 **Última Atualização:** 2026-03-08  
 **Próxima Review:** Após testar cache Metro  
 **Status:** ✅ Backend 100% pronto | 🟡 UI Fase 2 pendente
+
+
+
+### Gerar apk no windows
+
+- cd android
+- .\gradlew.bat assembleRelease
+- caso de erro verifique se existe arquivo local.properties na pasta android com o caminho do sdk
