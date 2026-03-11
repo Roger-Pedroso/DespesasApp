@@ -122,6 +122,52 @@ export const calcularAlocacao50_30_20 = async (mes, ano) => {
 };
 
 /**
+ * Buscar breakdown de "Poupar" por categoria
+ * Retorna investimentos e reserva de emergência
+ * @param {number} mes - Mês
+ * @param {number} ano - Ano
+ * @returns {object} - { investimentos, reserva_emergencia, outros_poupar }
+ */
+export const buscarBreakdownPoupar = async (mes, ano) => {
+  try {
+    const database = await getDatabase();
+
+    const resultado = await database.getAllAsync(
+      `SELECT 
+        categoria,
+        SUM(valor) as total,
+        COUNT(*) as quantidade
+       FROM despesas
+       WHERE tipo_gasto = 'poupar' AND mes = ? AND ano = ?
+       GROUP BY categoria`,
+      [mes, ano]
+    );
+
+    const breakdown = {
+      investimentos: 0,
+      reserva_emergencia: 0,
+      total: 0,
+    };
+
+    resultado.forEach(row => {
+      if (row.categoria === 'investimentos') {
+        breakdown.investimentos = row.total || 0;
+      } else if (row.categoria === 'reserva_emergencia') {
+        breakdown.reserva_emergencia = row.total || 0;
+      }
+    });
+
+    breakdown.total = breakdown.investimentos + breakdown.reserva_emergencia;
+
+    return breakdown;
+  } catch (error) {
+    const handled = handleError(error, 'buscarBreakdownPoupar');
+    logError(error, { action: 'buscarBreakdownPoupar', mes, ano });
+    throw handled;
+  }
+};
+
+/**
  * Buscar despesas de um tipo específico
  * @param {string} tipo_gasto - 'essencial', 'desejo' ou 'poupar'
  * @param {number} mes - Mês

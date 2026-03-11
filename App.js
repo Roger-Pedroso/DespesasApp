@@ -16,6 +16,7 @@ import SearchScreen from './src/screens/SearchScreen';
 import DashboardScreen from './src/screens/DashboardScreen';
 import BudgetsScreen from './src/screens/BudgetsScreen';
 import BudgetAllocationScreen from './src/screens/BudgetAllocationScreen';
+import SimulacaoScreen from './src/screens/SimulacaoScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -105,6 +106,18 @@ const AllocationStack = () => (
   </Stack.Navigator>
 );
 
+const SimulacaoStack = () => (
+  <Stack.Navigator
+    screenOptions={{
+      headerStyle: { backgroundColor: '#6C5CE7', elevation: 0, shadowOpacity: 0 },
+      headerTintColor: '#fff',
+      headerTitleStyle: { fontWeight: '700' },
+    }}
+  >
+    <Stack.Screen name="Simulacao" component={SimulacaoScreen} options={{ title: 'Simulador de Poupança' }} />
+  </Stack.Navigator>
+);
+
 const TabNavigator = () => {
   const insets = useSafeAreaInsets();
   return (
@@ -129,6 +142,7 @@ const TabNavigator = () => {
             DashboardTab: '📈',
             BudgetsTab: '💰',
             AllocationTab: '💳',
+            SimulacaoTab: '📊',
           };
           return <Text style={{ fontSize: 20 }}>{icons[route.name]}</Text>;
         },
@@ -139,6 +153,7 @@ const TabNavigator = () => {
       <Tab.Screen name="DashboardTab" component={DashboardStack} options={{ title: 'Dashboard' }} />
       <Tab.Screen name="BudgetsTab" component={BudgetsStack} options={{ title: 'Orçamentos' }} />
       <Tab.Screen name="AllocationTab" component={AllocationStack} options={{ title: 'Alocação' }} />
+      <Tab.Screen name="SimulacaoTab" component={SimulacaoStack} options={{ title: 'Simulador' }} />
     </Tab.Navigator>
   );
 };

@@ -8,6 +8,8 @@ export const CATEGORIAS = [
   { label: 'Vestuário', value: 'vestuario', icon: '👕', cor: '#FD79A8' },
   { label: 'Assinaturas', value: 'assinaturas', icon: '📱', cor: '#00B894' },
   { label: 'Outros', value: 'outros', icon: '💰', cor: '#B2BEC3' },
+  { label: 'Investimentos', value: 'investimentos', icon: '💼', cor: '#0984E3' },
+  { label: 'Reserva de Emergência', value: 'reserva_emergencia', icon: '🚨', cor: '#FF7675' },
 ];
 
 // Mapeamento de categoria para tipo de gasto (50/30/20)
@@ -20,6 +22,8 @@ export const CATEGORIA_TIPO_GASTO = {
   'lazer': 'desejo',            // Desejos
   'assinaturas': 'desejo',      // Desejos
   'vestuario': 'desejo',        // Desejos
+  'investimentos': 'poupar',    // Poupar
+  'reserva_emergencia': 'poupar', // Poupar
   'outros': 'essencial',        // Padrão: Essencial
 };
 

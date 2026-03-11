@@ -297,3 +297,4 @@ Para issues ou perguntas, ver:
 - cd android
 - .\gradlew.bat assembleRelease
 - caso de erro verifique se existe arquivo local.properties na pasta android com o caminho do sdk
+- local do apk: \android\app\build\outputs\apk\release
