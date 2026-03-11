@@ -1,300 +1,248 @@
-# DespesasApp - Plano de Desenvolvimento
+# 💰 DespesasApp - Aplicativo de Gestão de Despesas
 
-## 📊 Status Geral
+Um aplicativo React Native completo para controle pessoal de finanças com recursos avançados de análise, simulação e alocação orçamentária.
 
-```
-Fase 1 (Correções Críticas):     ✅ 100% COMPLETO
-Fase 2 (Features Essenciais):     ✅ 100% COMPLETO
-Fase 3 (Segurança & Backup):      ⏳ PRÓXIMO
-Fase 4 (Gamificação):             ⏳ FUTURO
-Fase 5 (Integrações):             ⏳ FUTURO
+## ✨ Features Implementadas
 
-Progresso Total: 40% (2/5 fases)
-```
+### 📊 Gestão de Despesas
+- ✅ **Cadastro de Despesas** - Adicionar, editar e deletar despesas com categorias
+- ✅ **11 Categorias** - Alimentação, Transporte, Saúde, Educação, Lazer, Moradia, Vestuário, Assinaturas, Outros, **Investimentos**, **Reserva de Emergência**
+- ✅ **Histórico Mensal** - Visualizar gastos por mês com navegação intuitiva
+- ✅ **Filtros Avançados** - Buscar por categoria, intervalo de datas, valor
+- ✅ **Templates de Despesas** - Reutilizar despesas frequentes com um clique
 
----
+### 💼 Alocação Orçamentária (50/30/20)
+- ✅ **Alocação 50/30/20** - Divisão inteligente: 50% Essencial, 30% Desejos, 20% Poupar
+- ✅ **Acompanhamento Visual** - Barras de progresso com status (OK/AVISO/EXCEDIDO)
+- ✅ **Breakdown de Subcategorias** - Ver discriminação de Investimentos vs Reserva de Emergência
+- ✅ **Recomendações Personalizadas** - Dicas baseadas no padrão de gastos
 
-## 🎯 Fase 1 - CONCLUÍDA ✅
+### 📈 Simulação de Poupança
+- ✅ **Calculadora de Simulação** - Quanto tempo para atingir uma meta de poupança?
+- ✅ **Juros Simples e Compostos** - Dois modos de cálculo de rentabilidade
+- ✅ **Parâmetros Configuráveis**:
+  - Valor-alvo (ex: R$ 50.000)
+  - Mensalidade a poupar (ex: R$ 1.000)
+  - Taxa de juros (ex: 1% a.m.)
+- ✅ **Formatação Inteligente** - Resultados em anos e meses (ex: "2a 3m")
+- ✅ **Tabela de Progressão** - Visualizar mês a mês a evolução
 
-**Status:** ✅ PRODUÇÃO-READY  
-**Data:** 2026-03-08  
-**Tarefas:** 10/10 (100%)
+### 🎯 Dashboard & Insights
+- ✅ **Resumo do Mês** - Gasto total, média diária, previsão
+- ✅ **Tendências** - Comparação com meses anteriores
+- ✅ **Top Categorias** - Ranking dos maiores gastos
+- ✅ **Score de Economia** - Pontuação de 0-100 baseada em desempenho
 
-### Implementado:
-- ✅ Memory leak fixes (3 screens)
-- ✅ Race condition fix (trocarMes)
-- ✅ Validação robusta (validators.js)
-- ✅ Error handler global (errorHandler.js)
-- ✅ Transações em BD + índices
-- ✅ Hook useMonthNavigation (sem duplicação)
-- ✅ Sistema de temas (theme.js)
-- ✅ PropTypes
-- ✅ Testes Jest
-
-### Arquivos:
-- Novos: 8
-- Modificados: 7
-- Total: 15
-
----
-
-## 🟡 Fase 2 - CONCLUÍDA ✅
-
-**Status:** ✅ BACKEND 100% PRONTO  
-**Data:** 2026-03-08  
-**Tarefas:** 5/5 (100%)
-
-### Implementado:
-- ✅ Busca e Filtros Avançados (search.js)
-- ✅ Templates de Despesas (templates.js + useTemplates.js)
-- ✅ Dashboard com Insights (insights.js + useInsights.js)
-- ✅ Metas e Orçamentos (budgets.js)
-- ✅ Hooks de Utilidade
-
-### Features:
-1. **Busca Inteligente**
-   - Filtros múltiplos combinados
-   - Busca por texto com sanitização
-   - Comparação de períodos
-   - Gasto acumulado
-
-2. **Templates**
-   - Criar/editar/deletar templates
-   - Reutilizar com um clique
-   - Hook para gerenciar
-
-3. **Dashboard**
-   - Tendência 12 meses
-   - Comparação mês vs mês
-   - Top 5 categorias
-   - Previsão até fim do mês
-   - Score de economia (0-100)
-
-4. **Orçamentos**
-   - Criar por categoria/período
-   - Alertas em 80%
-   - Status: OK/AVISO/EXCEDIDO
-   - Histórico e sugestões
-
-### Arquivos:
-- Novos: 10
-- Modificados: 1
-- Total: 11
-
-### Próximo Passo:
-**Integrar com UI (criar telas)** para exibir dados
+### 🛡️ Segurança & Confiabilidade
+- ✅ **Validação Robusta** - Todos os inputs validados
+- ✅ **SQLite Local** - Dados armazenados localmente no dispositivo
+- ✅ **Error Handling** - Tratamento completo de erros
+- ✅ **Sem Dependências Externas de Pagamento** - Totalmente gratuito
 
 ---
 
-## 🟠 Fase 3 - Segurança & Backup (PRÓXIMO)
+## 🏗️ Arquitetura Técnica
 
-**Estimado:** 2 semanas  
-**Status:** ⏳ PLANEJADO
+### Stack
+- **Frontend:** React Native (Expo)
+- **State Management:** Context API + Custom Hooks
+- **Database:** SQLite (Expo SQLite)
+- **Navigation:** React Navigation (Tabs + Stack)
 
-### Features Planejadas:
-- [ ] Backup Automático (Google Drive/OneDrive)
-- [ ] Sincronização entre dispositivos
-- [ ] Autenticação Biométrica (fingerprint/face)
-- [ ] Auditoria de Alterações (log de ações)
-- [ ] Encriptação de dados sensíveis (opcional)
-
-### Tarefas:
-- [ ] Adicionar tabela de audit log
-- [ ] Integrar com expo-secure-store
-- [ ] Implementar backup automático
-- [ ] Adicionar sync cloud
-- [ ] Autenticação biométrica
-
----
-
-## 🟡 Fase 4 - Gamificação (FUTURO)
-
-**Estimado:** 2 semanas  
-**Status:** ⏳ FUTURO
-
-### Features Planejadas:
-- [ ] Sistema de Conquistas (badges)
-- [ ] Desafios Mensais (com dificuldade)
-- [ ] Insights Motivacionais (push notifications)
-- [ ] Estatísticas Curiosas (trivia)
-- [ ] Ranking/Leaderboard (opcional)
-
-### Exemplos:
-- "Primeira Despesa" (unlock)
-- "Guardião do Orçamento" (sem exceder por 3 meses)
-- "Economia Extrema" (economizar >50% vs média)
-- "Maratonista" (100 dias com despesa)
-
----
-
-## 🔵 Fase 5 - Integrações (FUTURO)
-
-**Estimado:** 3+ semanas  
-**Status:** ⏳ FUTURO
-
-### Features Planejadas:
-- [ ] OCR para Recibos (câmera → extração de dados)
-- [ ] Integração com Câmbio (conversão automática)
-- [ ] Sincronização com Bancos (API)
-- [ ] Dashboard Web (acessar via web)
-- [ ] Relatórios Automáticos por Email
-
----
-
-## 📋 Arquivos Documentação
-
-```
-✅ FASE1_CORREÇÕES.md    - Fase 1 detalhada
-✅ FASE2_FEATURES.md     - Fase 2 detalhada
-✅ TROUBLESHOOTING.md    - Solução de problemas
-✅ plan.md              - Este arquivo
-```
-
----
-
-## 🛠️ Decisões Técnicas
-
-### Database
-- ✅ SQLite local (Expo)
-- ✅ WAL mode para concorrência
-- ✅ Foreign keys ativadas
-- ✅ Constraints e check rules
-- 📋 Tabelas: despesas, templates, budgets, (audit_log em Fase 3)
-
-### State Management
-- ✅ Context API com hooks
-- ✅ useExpensas() principal
-- ✅ useTemplates(), useInsights(), useBuscaAvancada()
-- 📋 Considerar Redux/Zustand para Fase 3+
-
-### Testing
-- ✅ Jest com testes unitários
-- 📋 Integration tests (Fase 3)
-- 📋 E2E tests com Detox (Fase 4)
-
-### UI/UX
-- ✅ React Navigation (tabs + stack)
-- ✅ Sistema de temas centralizado
-- 📋 Componentes para Fase 2 UI
-- 📋 Animações com Reanimated (Fase 4)
-
----
-
-## 📈 Métricas
-
-### Qualidade de Código
-```
-Fase 1: 5.5/10 → 8.5/10 (+54%)
-Fase 2: 8.5/10 → 8.7/10 (+2%)
-Próximo: 8.7/10 → 9.0/10 (segurança)
-```
-
-### Cobertura
-```
-Validadores:     ✅ 100%
-Database:        ✅ 80%
-Context:         ✅ 70%
-UI Screens:      ⏳ 0% (pendente integração)
-```
-
-### Performance
-```
-Queries: ✅ Otimizadas (com índices)
-Memory:  ✅ Sem leaks
-Speed:   ✅ <1s para operações BD
-```
-
----
-
-## 🚀 Próximos Passos Imediatos
-
-### Antes de Fase 3:
-
-1. **✅ Resolver cache Metro** (AGORA)
-   - Executar: `npm start -- --reset-cache`
-   - Ver novas features funcionando
-
-2. **Testar Fase 2 no Device**
-   - Criar template
-   - Usar busca com filtros
-   - Verificar dashboard/orçamento
-
-3. **Criar Telas de UI para Fase 2** (opcional)
-   - SearchScreen
-   - TemplatesScreen
-   - DashboardScreen
-   - BudgetsScreen
-
-4. **Iniciar Fase 3** (ou continuar com Fase 2 UI)
-   - Backup automático
-   - Autenticação biométrica
-
----
-
-## 💾 Estrutura do Projeto
+### Principais Arquivos
 
 ```
 src/
-├── context/
-│   └── ExpensasContext.js        - State + hooks
-├── database/
-│   ├── database.js               - Core + tabelas
-│   ├── search.js                 - Busca & filtros
-│   ├── insights.js               - Dashboard
-│   ├── budgets.js                - Orçamentos
-│   └── templates.js              - Templates
 ├── screens/
-│   ├── HomeScreen.js             - Lista despesas
-│   ├── AddExpenseScreen.js       - Form despesa
-│   ├── MonthlySummaryScreen.js   - Resumo mês
-│   └── ByCategoryScreen.js       - Por categoria
-│   └── (SearchScreen - PENDENTE)
-│   └── (DashboardScreen - PENDENTE)
+│   ├── HomeScreen.js                  - Lista de despesas
+│   ├── AddExpenseScreen.js            - Formulário de despesa
+│   ├── MonthlySummaryScreen.js        - Resumo mensal
+│   ├── ByCategoryScreen.js            - Gastos por categoria
+│   ├── BudgetAllocationScreen.js      - Alocação 50/30/20
+│   ├── SimulacaoScreen.js             - Simulador de poupança
+│   └── ...
 ├── components/
 │   ├── ExpenseItem.js
 │   ├── CategoryCard.js
-│   └── MonthSelector.js
-└── utils/
-    ├── validators.js             - Validação
-    ├── errorHandler.js           - Error handling
-    ├── theme.js                  - Temas
-    ├── useMonthNavigation.js      - Hook navegação
-    ├── useTemplates.js            - Hook templates
-    ├── useInsights.js             - Hook dashboard
-    └── useBuscaAvancada.js        - Hook busca
+│   ├── SimulacaoResultado.js          - Card de resultado
+│   ├── TabelaProgressao.js            - Tabela de progressão
+│   └── ...
+├── database/
+│   ├── database.js                    - Core SQLite
+│   ├── allocation.js                  - Cálculos de alocação
+│   └── ...
+├── utils/
+│   ├── constants.js                   - Categorias e constantes
+│   ├── validators.js                  - Validação de dados
+│   ├── errorHandler.js                - Tratamento de erros
+│   ├── parseUtils.js                  - Parse de valores (moeda)
+│   ├── simulacaoCalculos.js           - Cálculos de simulação
+│   ├── useSimulacao.js                - Hook de simulação
+│   └── ...
+└── context/
+    └── ExpensasContext.js             - Context principal
 ```
+
+---
+
+## 🚀 Como Usar
+
+### Instalação
+```bash
+# Clonar repositório
+git clone <repo-url>
+cd DespesasApp
+
+# Instalar dependências
+npm install
+
+# Executar no Expo
+npm start
+```
+
+### Funcionalidades Principais
+
+#### 1. Adicionar Despesa
+1. Clique no ícone "+" na tela principal
+2. Preencha descrição, valor, categoria e data
+3. Selecione uma das 11 categorias disponíveis
+4. Salve a despesa
+
+#### 2. Visualizar Alocação 50/30/20
+1. Abra a aba "Alocação"
+2. Veja a divisão do seu gasto:
+   - 💰 Essencial: Moradia, alimentação, transporte, etc (50%)
+   - 🎉 Desejos: Lazer, assinaturas, vestuário (30%)
+   - 🏦 Poupar: **Investimentos** e **Reserva de Emergência** (20%)
+3. Veja o breakdown de subcategorias no card "Poupar"
+
+#### 3. Usar Simulador de Poupança
+1. Abra a aba "Simulador" (📊)
+2. Digite os parâmetros:
+   - Quanto você quer juntar? (ex: R$ 50.000)
+   - Quanto pode guardar por mês? (ex: R$ 1.000)
+   - Taxa de juros? (ex: 1%)
+   - Tipo de juros: Simples ou Composto
+3. Veja o resultado: "Em 2a 3m você atinge seu objetivo"
+4. Consulte a tabela de progressão mês a mês
+
+---
+
+## 📊 Estrutura de Dados
+
+### Categorias de Despesa
+```
+ESSENCIAL (50%):
+├─ Alimentação 🍔
+├─ Transporte 🚗
+├─ Saúde ❤️
+├─ Educação 📚
+├─ Moradia 🏠
+└─ Outros 💰
+
+DESEJOS (30%):
+├─ Lazer 🎮
+├─ Vestuário 👕
+└─ Assinaturas 📱
+
+POUPAR (20%):
+├─ Investimentos 💼 (NOVO)
+└─ Reserva de Emergência 🚨 (NOVO)
+```
+
+### Tabela de Despesas
+```sql
+CREATE TABLE despesas (
+  id INTEGER PRIMARY KEY,
+  descricao TEXT NOT NULL,
+  valor REAL NOT NULL,
+  categoria TEXT NOT NULL,
+  data TEXT NOT NULL,
+  mes INTEGER NOT NULL,
+  ano INTEGER NOT NULL,
+  tipo_gasto TEXT NOT NULL,  -- essencial, desejo, poupar
+  recorrencia TEXT DEFAULT 'unica'
+);
+```
+
+---
+
+## 🎨 Interface
+
+### Telas Principais
+- **Home** - Lista de despesas do mês
+- **Cadastro** - Formulário para adicionar despesa
+- **Resumo** - Gastos totais e resumo do mês
+- **Categorias** - Breakdown por categoria
+- **Alocação** - Visualização 50/30/20
+- **Simulador** - Calculadora de poupança
+
+### Paleta de Cores
+- Primária: #6C5CE7 (roxo)
+- Sucesso: #2ED573 (verde)
+- Aviso: #FFB84D (laranja)
+- Erro: #FF4757 (vermelho)
 
 ---
 
 ## 🔐 Segurança
 
-- ✅ Validação robusta (validators.js)
-- ✅ SQL parameterizado (sem injection)
-- ✅ Error handling seguro (errorHandler.js)
-- ✅ Sanitização de strings
-- 📋 Biometria (Fase 3)
-- 📋 Encriptação (Fase 3)
+- ✅ **Validação de Entrada** - Todos os campos validados
+- ✅ **SQL Parameterizado** - Proteção contra SQL injection
+- ✅ **Dados Locais** - Nenhum envio de dados para servidores externos
+- ✅ **Tratamento de Erros** - Erros não expõem detalhes sensíveis
 
 ---
 
-## 📞 Contato / Issues
+## 📋 Requisitos
 
-Para issues ou perguntas, ver:
-- `TROUBLESHOOTING.md` - Problemas comuns
-- `FASE1_CORREÇÕES.md` - Detalhes Fase 1
-- `FASE2_FEATURES.md` - Detalhes Fase 2
+- Node.js 16+
+- npm ou yarn
+- Expo CLI
+- iOS 12+ ou Android 6.0+
 
 ---
 
-**Última Atualização:** 2026-03-08  
-**Próxima Review:** Após testar cache Metro  
-**Status:** ✅ Backend 100% pronto | 🟡 UI Fase 2 pendente
+## 🚧 Futuras Melhorias
 
+### Planejado (Não implementado)
+- Integração com Open Banking (Nubank, Itaú, Bradesco)
+- Backup automático na nuvem
+- Autenticação biométrica
+- Dashboard web
+- Relatórios por email
+- Gamificação (badges, desafios)
 
+---
 
-### Gerar apk no windows
+## 📝 Histórico de Versões
+
+### v1.0.0 (2026-03-11) - VERSÃO FINAL
+✅ Todas as features principais implementadas e testadas
+- Gestão de despesas completa
+- Alocação 50/30/20 com breakdown
+- Simulador de poupança
+- Novas categorias (Investimentos e Reserva)
+- Validação e erro handling
+
+---
+
+## 📄 Licença
+
+Este projeto é de código aberto e gratuito.
+
+---
+
+## Gerar apk no windows
 
 - cd android
 - .\gradlew.bat assembleRelease
 - caso de erro verifique se existe arquivo local.properties na pasta android com o caminho do sdk
 - local do apk: \android\app\build\outputs\apk\release
+
+---
+
+**Última Atualização:** 2026-03-11  
+**Status:** ✅ PRODUÇÃO-READY (v1.0.0)  
+**Desenvolvedor:** Roger
+
