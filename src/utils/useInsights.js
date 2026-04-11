@@ -20,9 +20,11 @@ export const useInsights = () => {
   const [economyScore, setEconomyScore] = useState(null);
   const [worstDay, setWorstDay] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const carregarInsights = useCallback(async (mes, ano) => {
     setLoading(true);
+    setError(null);
     try {
       const [
         tendencia,
@@ -46,10 +48,10 @@ export const useInsights = () => {
       setForecast(previsao);
       setEconomyScore(economia?.score || 50);
       setWorstDay(piorDia);
-    } catch (error) {
-      const handled = handleError(error, 'useInsights.carregarInsights');
-      logError(error, { action: 'useInsights.carregarInsights', mes, ano });
-      throw handled;
+    } catch (err) {
+      const handled = handleError(err, 'useInsights.carregarInsights');
+      logError(err, { action: 'useInsights.carregarInsights', mes, ano });
+      setError(handled.userMessage || 'Não foi possível carregar os dados.');
     } finally {
       setLoading(false);
     }
@@ -69,6 +71,7 @@ export const useInsights = () => {
     economyScore,
     worstDay,
     loading,
+    error,
     carregarInsights,
   };
 };

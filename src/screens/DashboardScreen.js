@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,8 +7,10 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Dimensions,
+  Alert,
 } from 'react-native';
 import { useInsights } from '../utils/useInsights';
+import { COLORS, BORDER_RADIUS, SPACING } from '../utils/theme';
 
 const DashboardScreen = () => {
   const {
@@ -19,6 +21,8 @@ const DashboardScreen = () => {
     economyScore,
     worstDay,
     loading,
+    error,
+    carregarInsights,
   } = useInsights();
 
   const [activeTab, setActiveTab] = useState('overview');
@@ -26,12 +30,28 @@ const DashboardScreen = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6C5CE7" />
+        <ActivityIndicator size="large" color={COLORS.primary} />
       </View>
     );
   }
 
-  const renderTrendChart = () => {
+  if (error) {
+    const now = new Date();
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorIcon}>⚠️</Text>
+        <Text style={styles.errorText}>{error}</Text>
+        <TouchableOpacity
+          style={styles.retryButton}
+          onPress={() => carregarInsights(now.getMonth() + 1, now.getFullYear())}
+        >
+          <Text style={styles.retryText}>Tentar novamente</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const renderTrendChart = useCallback(() => {
     if (!trends || trends.length === 0) return null;
 
     const maxValue = Math.max(...trends.map((t) => t.total || 0));
@@ -54,7 +74,7 @@ const DashboardScreen = () => {
                       styles.bar,
                       {
                         height: (trend.total / maxValue) * 150,
-                        backgroundColor: '#6C5CE7',
+                        backgroundColor: COLORS.primary,
                       },
                     ]}
                   />
@@ -69,9 +89,9 @@ const DashboardScreen = () => {
         </View>
       </View>
     );
-  };
+  }, [trends]);
 
-  const renderComparison = () => {
+  const renderComparison = useCallback(() => {
     if (!comparison) return null;
 
     const mes_atual = comparison.mesAtual?.total || 0;
@@ -79,7 +99,7 @@ const DashboardScreen = () => {
     const variance = mes_atual - mes_anterior;
     const percentageChange = mes_anterior > 0 ? ((variance / mes_anterior) * 100).toFixed(1) : 0;
     const trend = variance > 0 ? '📈 Aumento' : '📉 Redução';
-    const trendColor = variance > 0 ? '#FF4757' : '#2ED573';
+    const trendColor = variance > 0 ? COLORS.danger : COLORS.success;
 
     return (
       <View style={styles.comparisonContainer}>
@@ -111,9 +131,9 @@ const DashboardScreen = () => {
         </View>
       </View>
     );
-  };
+  }, [comparison]);
 
-  const renderTopCategories = () => {
+  const renderTopCategories = useCallback(() => {
     if (!topCategories || topCategories.length === 0) return null;
 
     const total = topCategories.reduce((sum, cat) => sum + (cat.total || 0), 0);
@@ -150,9 +170,9 @@ const DashboardScreen = () => {
         </Text>
       </View>
     );
-  };
+  }, [topCategories]);
 
-  const renderForecast = () => {
+  const renderForecast = useCallback(() => {
     if (!forecast) return null;
 
     const totalMesAtual = forecast.totalAteHoje || 0;
@@ -190,13 +210,13 @@ const DashboardScreen = () => {
         </Text>
       </View>
     );
-  };
+  }, [forecast]);
 
-  const renderEconomyScore = () => {
+  const renderEconomyScore = useCallback(() => {
     if (economyScore === null || economyScore === undefined) return null;
 
     const scoreColor =
-      economyScore >= 80 ? '#2ED573' : economyScore >= 50 ? '#FFB84D' : '#FF4757';
+      economyScore >= 80 ? COLORS.success : economyScore >= 50 ? COLORS.warning : COLORS.danger;
 
     return (
       <View style={styles.scoreContainer}>
@@ -225,9 +245,9 @@ const DashboardScreen = () => {
         </View>
       </View>
     );
-  };
+  }, [economyScore]);
 
-  const renderWorstDay = () => {
+  const renderWorstDay = useCallback(() => {
     if (!worstDay || !worstDay.data) return null;
 
     return (
@@ -249,7 +269,7 @@ const DashboardScreen = () => {
         </View>
       </View>
     );
-  };
+  }, [worstDay]);
 
   return (
     <View style={styles.container}>
@@ -304,54 +324,82 @@ const DashboardScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F6FA',
+    backgroundColor: COLORS.background,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: SPACING.xl,
+    backgroundColor: COLORS.background,
+  },
+  errorIcon: {
+    fontSize: 48,
+    marginBottom: SPACING.lg,
+  },
+  errorText: {
+    fontSize: 15,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+    marginBottom: SPACING.xl,
+  },
+  retryButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: BORDER_RADIUS.md,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.xl,
+  },
+  retryText: {
+    color: COLORS.textInverse,
+    fontWeight: '700',
+    fontSize: 14,
+  },
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.surface,
     borderBottomWidth: 1,
-    borderBottomColor: '#E8EAED',
-    paddingHorizontal: 12,
+    borderBottomColor: COLORS.border,
+    paddingHorizontal: SPACING.md,
   },
   tab: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: SPACING.md,
     alignItems: 'center',
     borderBottomWidth: 3,
     borderBottomColor: 'transparent',
   },
   tabActive: {
-    borderBottomColor: '#6C5CE7',
+    borderBottomColor: COLORS.primary,
   },
   tabText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#636E72',
+    color: COLORS.textSecondary,
   },
   tabTextActive: {
-    color: '#6C5CE7',
+    color: COLORS.primary,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.md,
   },
   chartContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 20,
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.xl,
+    marginBottom: SPACING.xl,
   },
   chartTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#2D3436',
-    marginBottom: 12,
+    color: COLORS.text,
+    marginBottom: SPACING.md,
   },
   chartContent: {
     alignItems: 'center',
@@ -361,7 +409,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'flex-end',
     height: 180,
-    marginBottom: 12,
+    marginBottom: SPACING.md,
     gap: 4,
   },
   barWrapper: {
@@ -375,151 +423,151 @@ const styles = StyleSheet.create({
   },
   barLabel: {
     fontSize: 10,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     marginTop: 4,
   },
   chartNote: {
     fontSize: 14,
-    color: '#636E72',
+    color: COLORS.textSecondary,
   },
   comparisonContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 20,
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.xl,
+    marginBottom: SPACING.xl,
   },
   comparisonRow: {
     flexDirection: 'row',
     gap: 8,
-    marginBottom: 20,
+    marginBottom: SPACING.xl,
   },
   comparisonCard: {
     flex: 1,
-    backgroundColor: '#F5F6FA',
-    borderRadius: 8,
-    padding: 12,
+    backgroundColor: COLORS.background,
+    borderRadius: BORDER_RADIUS.sm,
+    padding: SPACING.md,
     alignItems: 'center',
   },
   comparisonCardAlt: {
-    backgroundColor: '#E8F5E9',
+    backgroundColor: COLORS.success + '22',
   },
   comparisonLabel: {
     fontSize: 14,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     marginBottom: 8,
   },
   comparisonValue: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#6C5CE7',
+    color: COLORS.primary,
   },
   varianceContainer: {
-    borderRadius: 8,
-    paddingVertical: 12,
+    borderRadius: BORDER_RADIUS.sm,
+    paddingVertical: SPACING.md,
     alignItems: 'center',
   },
   varianceText: {
     fontSize: 14,
-    color: '#fff',
+    color: COLORS.textInverse,
     fontWeight: '600',
   },
   varianceValue: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#fff',
+    color: COLORS.textInverse,
     marginTop: 4,
   },
   categoriesContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 20,
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.xl,
+    marginBottom: SPACING.xl,
   },
   categoryRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   categoryInfo: {
     flex: 1,
-    marginRight: 12,
+    marginRight: SPACING.md,
   },
   categoryName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2D3436',
+    color: COLORS.text,
     marginBottom: 6,
   },
   progressBar: {
     height: 8,
-    backgroundColor: '#E8EAED',
+    backgroundColor: COLORS.border,
     borderRadius: 4,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#6C5CE7',
+    backgroundColor: COLORS.primary,
     borderRadius: 4,
   },
   categoryValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#6C5CE7',
+    color: COLORS.primary,
     minWidth: 100,
     textAlign: 'right',
   },
   totalText: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#2D3436',
-    marginTop: 12,
-    paddingTop: 12,
+    color: COLORS.text,
+    marginTop: SPACING.md,
+    paddingTop: SPACING.md,
     borderTopWidth: 1,
-    borderTopColor: '#E8EAED',
+    borderTopColor: COLORS.border,
   },
   forecastContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 20,
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.xl,
+    marginBottom: SPACING.xl,
   },
   forecastContent: {
     flexDirection: 'row',
     gap: 8,
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   forecastCard: {
     flex: 1,
-    backgroundColor: '#F5F6FA',
-    borderRadius: 8,
-    padding: 8,
+    backgroundColor: COLORS.background,
+    borderRadius: BORDER_RADIUS.sm,
+    padding: SPACING.sm,
     alignItems: 'center',
   },
   forecastLabel: {
     fontSize: 12,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     marginBottom: 4,
   },
   forecastValue: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#6C5CE7',
+    color: COLORS.primary,
   },
   forecastNote: {
     fontSize: 14,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     textAlign: 'center',
   },
   scoreContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 20,
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.xl,
+    marginBottom: SPACING.xl,
     alignItems: 'center',
   },
   scoreCircle: {
-    marginVertical: 20,
+    marginVertical: SPACING.xl,
   },
   scoreCircleInner: {
     width: 140,
@@ -528,39 +576,39 @@ const styles = StyleSheet.create({
     borderWidth: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5F6FA',
+    backgroundColor: COLORS.background,
   },
   scoreValue: {
     fontSize: 36,
     fontWeight: '700',
-    color: '#6C5CE7',
+    color: COLORS.primary,
   },
   scoreLabel: {
     fontSize: 14,
-    color: '#636E72',
+    color: COLORS.textSecondary,
   },
   scoreStatus: {
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    marginTop: 12,
+    borderRadius: BORDER_RADIUS.sm,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.xl,
+    marginTop: SPACING.md,
   },
   scoreStatusText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#fff',
+    color: COLORS.textInverse,
     textAlign: 'center',
   },
   worstDayContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 20,
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.xl,
+    marginBottom: SPACING.xl,
   },
   worstDayCard: {
-    backgroundColor: '#FFF3E0',
-    borderRadius: 8,
-    padding: 20,
+    backgroundColor: COLORS.warning + '33',
+    borderRadius: BORDER_RADIUS.sm,
+    padding: SPACING.xl,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -570,23 +618,23 @@ const styles = StyleSheet.create({
   },
   worstDayDate: {
     fontSize: 14,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     marginBottom: 8,
   },
   worstDayAmount: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#FF6B35',
+    color: COLORS.warning,
   },
   worstDayExpenses: {
-    backgroundColor: 'rgba(255, 107, 53, 0.1)',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    backgroundColor: COLORS.warning + '22',
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
     borderRadius: 6,
   },
   expensesLabel: {
     fontSize: 14,
-    color: '#FF6B35',
+    color: COLORS.warning,
     fontWeight: '600',
   },
 });

@@ -38,7 +38,7 @@ export const parseMonetario = (texto) => {
     const ultimoPonto = cleaned.lastIndexOf('.');
     const apos = cleaned.substring(ultimoPonto + 1);
     
-    if (apos.length === 2 && parseInt(apos) < 100) {
+    if (apos.length <= 2 && parseInt(apos) < 100) {
       // Parece decimal: "1.23" ou "1.05"
       return parseFloat(cleaned) || 0;
     } else {

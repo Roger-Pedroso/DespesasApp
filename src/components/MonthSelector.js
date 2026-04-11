@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MESES, formatarMoeda } from '../utils/constants';
+import { COLORS } from '../utils/theme';
 
 const MonthSelector = ({ mes, ano, onAnterior, onProximo }) => {
   return (
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.surface,
     marginHorizontal: 16,
     marginVertical: 10,
     borderRadius: 14,
@@ -36,10 +37,10 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   btn: { padding: 8 },
-  arrow: { fontSize: 28, color: '#6C5CE7', fontWeight: '300' },
+  arrow: { fontSize: 28, color: COLORS.primary, fontWeight: '300' },
   center: { alignItems: 'center' },
-  mes: { fontSize: 18, fontWeight: '700', color: '#2D3436' },
-  ano: { fontSize: 13, color: '#B2BEC3', marginTop: 2 },
+  mes: { fontSize: 18, fontWeight: '700', color: COLORS.text },
+  ano: { fontSize: 13, color: COLORS.textTertiary, marginTop: 2 },
 });
 
 export default MonthSelector;

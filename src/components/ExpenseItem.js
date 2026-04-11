@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { getCategoriaInfo, getFormaPagamentoInfo, formatarMoeda } from '../utils/constants';
+import { COLORS } from '../utils/theme';
 
 const ExpenseItem = ({ despesa, onDelete }) => {
   const categoria = getCategoriaInfo(despesa.categoria);
   const pagamento = getFormaPagamentoInfo(despesa.forma_pagamento);
-  const data = new Date(despesa.data + 'T00:00:00');
-  const dataFormatada = data.toLocaleDateString('pt-BR');
+  const dataFormatada = new Date(despesa.data + 'T00:00:00').toLocaleDateString('pt-BR');
 
   return (
     <View style={[styles.container, { borderLeftColor: categoria.cor }]}>
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.surface,
     borderRadius: 12,
     marginHorizontal: 16,
     marginVertical: 6,
@@ -60,22 +60,22 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#F5F6FA',
+    backgroundColor: COLORS.background,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
   icon: { fontSize: 22 },
   info: { flex: 1 },
-  descricao: { fontSize: 15, fontWeight: '600', color: '#2D3436', marginBottom: 4 },
+  descricao: { fontSize: 15, fontWeight: '600', color: COLORS.text, marginBottom: 4 },
   tags: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginBottom: 4 },
-  tag: { backgroundColor: '#F5F6FA', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
-  tagText: { fontSize: 11, color: '#636E72', fontWeight: '500' },
-  data: { fontSize: 12, color: '#B2BEC3' },
+  tag: { backgroundColor: COLORS.background, borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
+  tagText: { fontSize: 11, color: COLORS.textSecondary, fontWeight: '500' },
+  data: { fontSize: 12, color: COLORS.textTertiary },
   right: { alignItems: 'flex-end', gap: 6 },
-  valor: { fontSize: 15, fontWeight: '700', color: '#2D3436' },
+  valor: { fontSize: 15, fontWeight: '700', color: COLORS.text },
   deleteBtn: { padding: 4 },
-  deleteText: { fontSize: 14, color: '#DFE6E9', fontWeight: '700' },
+  deleteText: { fontSize: 14, color: COLORS.danger, fontWeight: '700' },
 });
 
 export default ExpenseItem;

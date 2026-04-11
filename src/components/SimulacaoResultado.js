@@ -107,7 +107,7 @@ export const SimulacaoResultado = ({ resultado, calculando }) => {
             <Text style={styles.infoLabel}>Total Contribuído</Text>
           </View>
           <Text style={styles.infoValor}>
-            {formatarMoeda(resultado.meses * (resultado.saldoFinal - resultado.jurosGanhos) / resultado.meses)}
+            {formatarMoeda(resultado.saldoFinal - resultado.jurosGanhos)}
           </Text>
         </View>
 
@@ -118,7 +118,7 @@ export const SimulacaoResultado = ({ resultado, calculando }) => {
             <Text style={styles.infoLabel}>% de Juros</Text>
           </View>
           <Text style={[styles.infoValor, styles.valorDestaque]}>
-            {((resultado.jurosGanhos / resultado.saldoFinal) * 100).toFixed(1)}%
+            {resultado.saldoFinal > 0 ? ((resultado.jurosGanhos / resultado.saldoFinal) * 100).toFixed(1) : '0.0'}%
           </Text>
         </View>
       </View>

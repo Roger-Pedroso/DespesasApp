@@ -12,11 +12,13 @@ import { useAlocacao } from '../utils/useAlocacao';
 import { useMonthNavigation } from '../utils/useMonthNavigation';
 import { buscarBreakdownPoupar } from '../database/allocation';
 import { MESES } from '../utils/constants';
+import { COLORS } from '../utils/theme';
 
 const BudgetAllocationScreen = () => {
   const { alocacao, loading, carregarAlocacao } = useAlocacao();
   const { mesSelecionado, anoSelecionado, proximoMes, mesPrevio } = useMonthNavigation();
   const [breakdownPoupar, setBreakdownPoupar] = useState(null);
+  const [breakdownError, setBreakdownError] = useState(null);
 
   useEffect(() => {
     carregarAlocacao(mesSelecionado, anoSelecionado);
@@ -29,7 +31,7 @@ const BudgetAllocationScreen = () => {
         const breakdown = await buscarBreakdownPoupar(mesSelecionado, anoSelecionado);
         setBreakdownPoupar(breakdown);
       } catch (error) {
-        console.warn('Erro ao carregar breakdown:', error);
+        setBreakdownError('Não foi possível carregar o detalhamento.');
         setBreakdownPoupar({ investimentos: 0, reserva_emergencia: 0, total: 0 });
       }
     };
@@ -40,7 +42,7 @@ const BudgetAllocationScreen = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6C5CE7" />
+        <ActivityIndicator size="large" color={COLORS.primary} />
       </View>
     );
   }
@@ -60,8 +62,8 @@ const BudgetAllocationScreen = () => {
     const alvo = data.alvo.toFixed(2).replace('.', ',');
 
     const statusColor =
-      data.status === 'OK' ? '#2ED573' :
-      data.status === 'AVISO' ? '#FFB84D' : '#FF4757';
+      data.status === 'OK' ? COLORS.success :
+      data.status === 'AVISO' ? COLORS.warning : COLORS.danger;
 
     const statusEmoji =
       data.status === 'OK' ? '✅' :
@@ -109,6 +111,11 @@ const BudgetAllocationScreen = () => {
               <Text style={styles.valueAmount}>R$ {alvo}</Text>
             </View>
           </View>
+
+          {/* Erro de breakdown */}
+          {breakdownError && (
+            <Text style={styles.breakdownErrorText}>{breakdownError}</Text>
+          )}
 
           {/* Breakdown de subcategorias */}
           <View style={styles.breakdownContainer}>
@@ -261,7 +268,7 @@ const BudgetAllocationScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F6FA',
+    backgroundColor: COLORS.background,
   },
   loadingContainer: {
     flex: 1,
@@ -276,14 +283,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#2D3436',
+    color: COLORS.text,
     marginBottom: 12,
   },
   monthSelector: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.surface,
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -295,15 +302,15 @@ const styles = StyleSheet.create({
   monthButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#6C5CE7',
+    color: COLORS.primary,
   },
   monthText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2D3436',
+    color: COLORS.text,
   },
   totalSection: {
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.surface,
     marginHorizontal: 16,
     marginVertical: 12,
     paddingVertical: 16,
@@ -313,17 +320,17 @@ const styles = StyleSheet.create({
   },
   totalLabel: {
     fontSize: 12,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     fontWeight: '600',
   },
   totalAmount: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#6C5CE7',
+    color: COLORS.primary,
     marginTop: 4,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.surface,
     marginHorizontal: 16,
     marginVertical: 10,
     paddingVertical: 16,
@@ -348,11 +355,11 @@ const styles = StyleSheet.create({
   cardLabel: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#2D3436',
+    color: COLORS.text,
   },
   cardSubLabel: {
     fontSize: 11,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     marginTop: 2,
   },
   statusEmoji: {
@@ -367,7 +374,7 @@ const styles = StyleSheet.create({
   progressBar: {
     flex: 1,
     height: 12,
-    backgroundColor: '#E8EAED',
+    backgroundColor: COLORS.border,
     borderRadius: 6,
     overflow: 'hidden',
   },
@@ -378,7 +385,7 @@ const styles = StyleSheet.create({
   progressLabel: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#2D3436',
+    color: COLORS.text,
     minWidth: 40,
     textAlign: 'right',
   },
@@ -389,7 +396,7 @@ const styles = StyleSheet.create({
   },
   valueBox: {
     flex: 1,
-    backgroundColor: '#F5F6FA',
+    backgroundColor: COLORS.background,
     borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 10,
@@ -397,13 +404,13 @@ const styles = StyleSheet.create({
   },
   valueLabel: {
     fontSize: 11,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     fontWeight: '600',
   },
   valueAmount: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#2D3436',
+    color: COLORS.text,
     marginTop: 2,
   },
   recomendacao: {
@@ -411,7 +418,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   tipsSection: {
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.surface,
     marginHorizontal: 16,
     marginVertical: 12,
     paddingVertical: 16,
@@ -421,7 +428,7 @@ const styles = StyleSheet.create({
   tipsTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#2D3436',
+    color: COLORS.text,
     marginBottom: 12,
   },
   tipItem: {
@@ -430,26 +437,26 @@ const styles = StyleSheet.create({
   },
   tipBullet: {
     fontSize: 14,
-    color: '#6C5CE7',
+    color: COLORS.primary,
     fontWeight: '700',
     marginRight: 8,
   },
   tipText: {
     fontSize: 12,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     flex: 1,
     lineHeight: 16,
   },
   emptyText: {
     textAlign: 'center',
-    color: '#636E72',
+    color: COLORS.textSecondary,
     marginTop: 20,
   },
   spacer: {
     height: 20,
   },
   breakdownContainer: {
-    backgroundColor: '#F5F6FA',
+    backgroundColor: COLORS.background,
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
@@ -457,7 +464,7 @@ const styles = StyleSheet.create({
   breakdownTitle: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#636E72',
+    color: COLORS.textSecondary,
     marginBottom: 8,
   },
   breakdownItem: {
@@ -465,7 +472,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 6,
     borderBottomWidth: 1,
-    borderBottomColor: '#E8EAED',
+    borderBottomColor: COLORS.border,
   },
   breakdownIcon: {
     fontSize: 16,
@@ -477,19 +484,24 @@ const styles = StyleSheet.create({
   breakdownLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#2D3436',
+    color: COLORS.text,
   },
   breakdownValue: {
     fontSize: 11,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     marginTop: 2,
   },
   breakdownEmpty: {
     fontSize: 11,
-    color: '#B2BEC3',
+    color: COLORS.textTertiary,
     fontStyle: 'italic',
     textAlign: 'center',
     paddingVertical: 8,
+  },
+  breakdownErrorText: {
+    fontSize: 11,
+    color: COLORS.danger,
+    marginBottom: 8,
   },
 });
 

@@ -8,10 +8,10 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
-  Alert,
 } from 'react-native';
 import { useBuscaAvancada } from '../utils/useBuscaAvancada';
 import { useExpensas } from '../context/ExpensasContext';
+import { COLORS } from '../utils/theme';
 
 const SearchScreen = () => {
   const { categorias } = useExpensas();
@@ -23,8 +23,10 @@ const SearchScreen = () => {
   const [maxValue, setMaxValue] = useState('');
   const [results, setResults] = useState([]);
   const [searched, setSearched] = useState(false);
+  const [searchError, setSearchError] = useState(null);
 
   const handleSearch = async () => {
+    setSearchError(null);
     try {
       setSearched(true);
       const filters = {
@@ -36,13 +38,8 @@ const SearchScreen = () => {
 
       const data = await buscar(filters);
       setResults(data);
-
-      if (data.length === 0) {
-        Alert.alert('Nenhum resultado', 'Nenhuma despesa encontrada com esses filtros.');
-      }
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível realizar a busca.');
-      console.error(error);
+      setSearchError('Não foi possível realizar a busca. Tente novamente.');
     }
   };
 
@@ -53,6 +50,7 @@ const SearchScreen = () => {
     setMaxValue('');
     setResults([]);
     setSearched(false);
+    setSearchError(null);
   };
 
   const renderExpenseItem = ({ item }) => (
@@ -188,8 +186,15 @@ const SearchScreen = () => {
           </TouchableOpacity>
         </View>
 
+        {/* Banner de erro */}
+        {searchError && (
+          <View style={styles.errorBanner}>
+            <Text style={styles.errorBannerText}>{searchError}</Text>
+          </View>
+        )}
+
         {/* Resultados */}
-        {searched && (
+        {searched && !searchError && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
               Resultados ({results.length})
@@ -223,7 +228,7 @@ const SearchScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F6FA',
+    backgroundColor: COLORS.background,
   },
   scrollView: {
     flex: 1,
@@ -236,12 +241,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#2D3436',
+    color: COLORS.text,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: '#636E72',
+    color: COLORS.textSecondary,
   },
   section: {
     marginBottom: 20,
@@ -249,18 +254,18 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2D3436',
+    color: COLORS.text,
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.surface,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: '#E8EAED',
+    borderColor: COLORS.border,
     fontSize: 14,
-    color: '#2D3436',
+    color: COLORS.text,
   },
   categoryScroll: {
     marginBottom: 8,
@@ -269,21 +274,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: '#E8EAED',
+    borderColor: COLORS.border,
     marginRight: 8,
   },
   categoryBtnActive: {
-    backgroundColor: '#6C5CE7',
-    borderColor: '#6C5CE7',
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
   },
   categoryBtnText: {
     fontSize: 12,
-    color: '#636E72',
+    color: COLORS.textSecondary,
   },
   categoryBtnTextActive: {
-    color: '#fff',
+    color: COLORS.textInverse,
     fontWeight: '600',
   },
   valueRow: {
@@ -296,7 +301,7 @@ const styles = StyleSheet.create({
   },
   valueSeparator: {
     fontSize: 12,
-    color: '#636E72',
+    color: COLORS.textSecondary,
   },
   buttonRow: {
     flexDirection: 'row',
@@ -311,34 +316,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   searchButton: {
-    backgroundColor: '#6C5CE7',
+    backgroundColor: COLORS.primary,
   },
   clearButton: {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: COLORS.borderLight,
   },
   buttonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#fff',
+    color: COLORS.textInverse,
   },
   clearButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#636E72',
+    color: COLORS.textSecondary,
   },
   list: {
     maxHeight: 300,
   },
   expenseItem: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.surface,
     paddingHorizontal: 12,
     paddingVertical: 8,
     marginHorizontal: 12,
     marginVertical: 4,
     borderRadius: 8,
     borderLeftWidth: 4,
-    borderLeftColor: '#6C5CE7',
+    borderLeftColor: COLORS.primary,
   },
   expenseLeft: {
     flex: 1,
@@ -349,26 +354,26 @@ const styles = StyleSheet.create({
   expenseDescription: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#2D3436',
+    color: COLORS.text,
   },
   expenseCategory: {
     fontSize: 12,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     marginTop: 2,
   },
   expenseDate: {
     fontSize: 10,
-    color: '#B2BEC3',
+    color: COLORS.textTertiary,
     marginTop: 2,
   },
   expenseValue: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#6C5CE7',
+    color: COLORS.primary,
   },
   expensePayment: {
     fontSize: 10,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     marginTop: 2,
   },
   emptyState: {
@@ -377,7 +382,18 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     fontSize: 12,
-    color: '#636E72',
+    color: COLORS.textSecondary,
+  },
+  errorBanner: {
+    backgroundColor: COLORS.danger + '22',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+  },
+  errorBannerText: {
+    fontSize: 14,
+    color: COLORS.danger,
+    fontWeight: '600',
   },
 });
 

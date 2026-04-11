@@ -4,10 +4,20 @@
  */
 
 module.exports = {
-  preset: 'react-native',
   testEnvironment: 'node',
   transform: {
-    '^.+\\.jsx?$': 'babel-jest',
+    '^.+\\.[jt]sx?$': 'babel-jest',
+  },
+  transformIgnorePatterns: [
+    // Transform react-native and related packages, but NOT react-native/jest
+    // (react-native 0.83 jest helpers use Flow `as` operator which Babel can't handle)
+    'node_modules/(?!(react-native(?!/jest)|@react-native(-community)?)/)',
+  ],
+  moduleNameMapper: {
+    // Suppress any react-native internals that require platform-specific modules
+    '^react-native/Libraries/(.*)$': '<rootDir>/__mocks__/react-native-library.js',
+    // Map react-native itself to the react-native package
+    '^react-native$': 'react-native',
   },
   testMatch: [
     '**/__tests__/**/*.test.js',

@@ -53,45 +53,36 @@ export const criarOrcamento = async (budget) => {
 export const buscarOrcamentos = async (ano_mes) => {
   try {
     const database = await getDatabase();
-
-    const orcamentos = await database.getAllAsync(
-      `SELECT id, categoria, limite FROM budgets WHERE ano_mes = ?`,
-      [ano_mes]
-    );
-
-    // Buscar gasto atual por categoria
     const [anoStr, mesStr] = ano_mes.split('-');
     const mes = parseInt(mesStr, 10);
     const ano = parseInt(anoStr, 10);
 
-    const gastosPorCategoria = await database.getAllAsync(
-      `SELECT categoria, SUM(valor) as total FROM despesas 
-       WHERE mes = ? AND ano = ?
-       GROUP BY categoria`,
-      [mes, ano]
+    const resultado = await database.getAllAsync(
+      `SELECT b.id, b.categoria, b.limite,
+              COALESCE(SUM(d.valor), 0) as gasto_atual
+       FROM budgets b
+       LEFT JOIN despesas d
+         ON d.categoria = b.categoria
+         AND d.mes = ?
+         AND d.ano = ?
+       WHERE b.ano_mes = ?
+       GROUP BY b.id, b.categoria, b.limite`,
+      [mes, ano, ano_mes]
     );
 
-    // Combinar dados
-    const resultado = orcamentos.map(orcamento => {
-      const gasto = gastosPorCategoria.find(g => g.categoria === orcamento.categoria);
-      const gasto_atual = gasto?.total || 0;
-      const percentualUsado = (gasto_atual / orcamento.limite) * 100;
-      const disponivel = orcamento.limite - gasto_atual;
-
+    return resultado.map(row => {
+      const percentualUsado = row.limite > 0 ? (row.gasto_atual / row.limite) * 100 : 0;
       return {
-        ...orcamento,
-        gasto_atual,
+        ...row,
         mes,
         ano,
         percentualUsado,
-        disponivel,
-        status: percentualUsado > 100 ? 'EXCEDIDO' : 
-                percentualUsado >= 80 ? 'AVISO' : 
+        disponivel: row.limite - row.gasto_atual,
+        status: percentualUsado > 100 ? 'EXCEDIDO' :
+                percentualUsado >= 80 ? 'AVISO' :
                 'OK',
       };
     });
-
-    return resultado;
   } catch (error) {
     const handled = handleError(error, 'buscarOrcamentos');
     logError(error, { action: 'buscarOrcamentos', ano_mes });
@@ -182,7 +173,7 @@ export const buscarSugestoesDeDesvio = async (ano_mes) => {
         if (!orcamento) return null;
 
         const desvio = gasto.total - orcamento.limite;
-        const percentualDesvio = (desvio / orcamento.limite) * 100;
+        const percentualDesvio = orcamento.limite > 0 ? (desvio / orcamento.limite) * 100 : 0;
 
         return {
           categoria: gasto.categoria,

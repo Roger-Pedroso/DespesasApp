@@ -7,6 +7,7 @@ import { useExpensas } from '../context/ExpensasContext';
 import { CATEGORIAS, RECORRENCIAS, FORMAS_PAGAMENTO, getTipoGastoFromCategoria } from '../utils/constants';
 import { isValidDate, isValidBRL, isValidDescricao } from '../utils/validators';
 import { handleError } from '../utils/errorHandler';
+import { COLORS } from '../utils/theme';
 
 const AddExpenseScreen = ({ navigation }) => {
   const { adicionarDespesa } = useExpensas();
@@ -156,7 +157,7 @@ const AddExpenseScreen = ({ navigation }) => {
               disabled={salvando}
             >
               <Text style={styles.chipIcon}>{cat.icon}</Text>
-              <Text style={[styles.chipLabel, categoria === cat.value && { color: '#fff' }]}>{cat.label}</Text>
+              <Text style={[styles.chipLabel, categoria === cat.value && { color: COLORS.textInverse }]}>{cat.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -174,7 +175,7 @@ const AddExpenseScreen = ({ navigation }) => {
                 key={tipo}
                 style={[
                   styles.typeGastoBtn,
-                  tipoGasto === tipo && { backgroundColor: '#6C5CE7', borderColor: '#6C5CE7' }
+                  tipoGasto === tipo && { backgroundColor: COLORS.primary, borderColor: COLORS.primary }
                 ]}
                 onPress={() => setTipoGasto(tipo)}
                 disabled={salvando}
@@ -182,7 +183,7 @@ const AddExpenseScreen = ({ navigation }) => {
                 <Text
                   style={[
                     styles.typeGastoLabel,
-                    tipoGasto === tipo && { color: '#fff', fontWeight: '700' }
+                    tipoGasto === tipo && { color: COLORS.textInverse, fontWeight: '700' }
                   ]}
                 >
                   {labels[tipo]}
@@ -202,7 +203,7 @@ const AddExpenseScreen = ({ navigation }) => {
               disabled={salvando}
             >
               <Text style={styles.payIcon}>{fp.icon}</Text>
-              <Text style={[styles.payLabel, formaPagamento === fp.value && { color: '#fff' }]}>{fp.label}</Text>
+              <Text style={[styles.payLabel, formaPagamento === fp.value && { color: COLORS.textInverse }]}>{fp.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -232,47 +233,47 @@ const AddExpenseScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F6FA', padding: 16 },
-  sectionTitle: { fontSize: 13, fontWeight: '700', color: '#636E72', textTransform: 'uppercase', marginTop: 18, marginBottom: 8, letterSpacing: 0.5 },
+  container: { flex: 1, backgroundColor: COLORS.background, padding: 16 },
+  sectionTitle: { fontSize: 13, fontWeight: '700', color: COLORS.textSecondary, textTransform: 'uppercase', marginTop: 18, marginBottom: 8, letterSpacing: 0.5 },
   input: {
-    backgroundColor: '#fff', borderRadius: 12, padding: 14,
-    fontSize: 16, color: '#2D3436',
+    backgroundColor: COLORS.surface, borderRadius: 12, padding: 14,
+    fontSize: 16, color: COLORS.text,
     shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 3, elevation: 1,
   },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
-    backgroundColor: '#fff', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 8,
-    borderWidth: 1.5, borderColor: '#DFE6E9',
+    backgroundColor: COLORS.surface, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 8,
+    borderWidth: 1.5, borderColor: COLORS.border,
   },
   chipIcon: { fontSize: 16 },
-  chipLabel: { fontSize: 13, color: '#636E72', fontWeight: '500' },
+  chipLabel: { fontSize: 13, color: COLORS.textSecondary, fontWeight: '500' },
   row: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   payBtn: {
     flex: 1, minWidth: 90, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
-    backgroundColor: '#fff', borderRadius: 12, padding: 12, borderWidth: 1.5, borderColor: '#DFE6E9',
+    backgroundColor: COLORS.surface, borderRadius: 12, padding: 12, borderWidth: 1.5, borderColor: COLORS.border,
   },
   payIcon: { fontSize: 18 },
-  payLabel: { fontSize: 14, color: '#636E72', fontWeight: '600' },
+  payLabel: { fontSize: 14, color: COLORS.textSecondary, fontWeight: '600' },
   recBtn: {
-    flex: 1, minWidth: 70, alignItems: 'center', backgroundColor: '#fff',
-    borderRadius: 10, padding: 10, borderWidth: 1.5, borderColor: '#DFE6E9',
+    flex: 1, minWidth: 70, alignItems: 'center', backgroundColor: COLORS.surface,
+    borderRadius: 10, padding: 10, borderWidth: 1.5, borderColor: COLORS.border,
   },
-  recBtnActive: { backgroundColor: '#6C5CE7', borderColor: '#6C5CE7' },
-  recLabel: { fontSize: 13, color: '#636E72', fontWeight: '500' },
-  recLabelActive: { color: '#fff' },
+  recBtnActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
+  recLabel: { fontSize: 13, color: COLORS.textSecondary, fontWeight: '500' },
+  recLabelActive: { color: COLORS.textInverse },
   typeGastoContainer: { flexDirection: 'column', gap: 10 },
   typeGastoBtn: {
-    backgroundColor: '#fff', borderRadius: 12, paddingVertical: 12, paddingHorizontal: 16,
-    borderWidth: 1.5, borderColor: '#DFE6E9', alignItems: 'center',
+    backgroundColor: COLORS.surface, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 16,
+    borderWidth: 1.5, borderColor: COLORS.border, alignItems: 'center',
   },
-  typeGastoLabel: { fontSize: 14, color: '#636E72', fontWeight: '600' },
+  typeGastoLabel: { fontSize: 14, color: COLORS.textSecondary, fontWeight: '600' },
   saveBtn: {
-    backgroundColor: '#6C5CE7', borderRadius: 16, padding: 16,
+    backgroundColor: COLORS.primary, borderRadius: 16, padding: 16,
     alignItems: 'center', marginTop: 28,
-    shadowColor: '#6C5CE7', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 4,
+    shadowColor: COLORS.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 4,
   },
-  saveBtnText: { color: '#fff', fontSize: 17, fontWeight: '800' },
+  saveBtnText: { color: COLORS.textInverse, fontSize: 17, fontWeight: '800' },
 });
 
 export default AddExpenseScreen;

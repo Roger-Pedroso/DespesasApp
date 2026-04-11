@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import {
   buscarDespesasPorMes,
@@ -54,7 +54,10 @@ export const ExpensasProvider = ({ children }) => {
     await carregarDados(mes, ano);
   };
 
-  const totalMes = despesas.reduce((acc, d) => acc + d.valor, 0);
+  const totalMes = useMemo(
+    () => despesas.reduce((acc, d) => acc + d.valor, 0),
+    [despesas]
+  );
 
   const value = {
     mesSelecionado,

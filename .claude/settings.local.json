@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /c/Projetos/DespesasApp/*.test.js)",
+      "Bash(npx jest:*)",
+      "Bash(ls node_modules/react-native/jest-preset*)"
+    ]
+  }
+}

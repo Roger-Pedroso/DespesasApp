@@ -7,6 +7,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 
 import { initDatabase } from './src/database/database';
 import { ExpensasProvider } from './src/context/ExpensasContext';
+import { COLORS } from './src/utils/theme';
 
 import HomeScreen from './src/screens/HomeScreen';
 import AddExpenseScreen from './src/screens/AddExpenseScreen';
@@ -21,99 +22,57 @@ import SimulacaoScreen from './src/screens/SimulacaoScreen';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+const HEADER_OPTIONS = {
+  headerStyle: { backgroundColor: COLORS.primary, elevation: 0, shadowOpacity: 0 },
+  headerTintColor: COLORS.textInverse,
+  headerTitleStyle: { fontWeight: '700' },
+};
+
 const HomeStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: '#6C5CE7', elevation: 0, shadowOpacity: 0 },
-      headerTintColor: '#fff',
-      headerTitleStyle: { fontWeight: '700' },
-    }}
-  >
+  <Stack.Navigator screenOptions={HEADER_OPTIONS}>
     <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Despesas' }} />
     <Stack.Screen name="AddExpense" component={AddExpenseScreen} options={{ title: 'Nova Despesa' }} />
   </Stack.Navigator>
 );
 
 const SummaryStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: '#6C5CE7', elevation: 0, shadowOpacity: 0 },
-      headerTintColor: '#fff',
-      headerTitleStyle: { fontWeight: '700' },
-    }}
-  >
+  <Stack.Navigator screenOptions={HEADER_OPTIONS}>
     <Stack.Screen name="MonthlySummary" component={MonthlySummaryScreen} options={{ title: 'Resumo Mensal' }} />
   </Stack.Navigator>
 );
 
 const CategoryStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: '#6C5CE7', elevation: 0, shadowOpacity: 0 },
-      headerTintColor: '#fff',
-      headerTitleStyle: { fontWeight: '700' },
-    }}
-  >
+  <Stack.Navigator screenOptions={HEADER_OPTIONS}>
     <Stack.Screen name="ByCategory" component={ByCategoryScreen} options={{ title: 'Por Categoria' }} />
   </Stack.Navigator>
 );
 
 const SearchStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: '#6C5CE7', elevation: 0, shadowOpacity: 0 },
-      headerTintColor: '#fff',
-      headerTitleStyle: { fontWeight: '700' },
-    }}
-  >
+  <Stack.Navigator screenOptions={HEADER_OPTIONS}>
     <Stack.Screen name="Search" component={SearchScreen} options={{ title: 'Buscar Despesas' }} />
   </Stack.Navigator>
 );
 
 const DashboardStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: '#6C5CE7', elevation: 0, shadowOpacity: 0 },
-      headerTintColor: '#fff',
-      headerTitleStyle: { fontWeight: '700' },
-    }}
-  >
+  <Stack.Navigator screenOptions={HEADER_OPTIONS}>
     <Stack.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Dashboard' }} />
   </Stack.Navigator>
 );
 
 const BudgetsStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: '#6C5CE7', elevation: 0, shadowOpacity: 0 },
-      headerTintColor: '#fff',
-      headerTitleStyle: { fontWeight: '700' },
-    }}
-  >
+  <Stack.Navigator screenOptions={HEADER_OPTIONS}>
     <Stack.Screen name="Budgets" component={BudgetsScreen} options={{ title: 'Orçamentos' }} />
   </Stack.Navigator>
 );
 
 const AllocationStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: '#6C5CE7', elevation: 0, shadowOpacity: 0 },
-      headerTintColor: '#fff',
-      headerTitleStyle: { fontWeight: '700' },
-    }}
-  >
+  <Stack.Navigator screenOptions={HEADER_OPTIONS}>
     <Stack.Screen name="Allocation" component={BudgetAllocationScreen} options={{ title: 'Alocação 50/30/20' }} />
   </Stack.Navigator>
 );
 
 const SimulacaoStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: '#6C5CE7', elevation: 0, shadowOpacity: 0 },
-      headerTintColor: '#fff',
-      headerTitleStyle: { fontWeight: '700' },
-    }}
-  >
+  <Stack.Navigator screenOptions={HEADER_OPTIONS}>
     <Stack.Screen name="Simulacao" component={SimulacaoScreen} options={{ title: 'Simulador de Poupança' }} />
   </Stack.Navigator>
 );
@@ -124,12 +83,12 @@ const TabNavigator = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: '#6C5CE7',
-        tabBarInactiveTintColor: '#B2BEC3',
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: COLORS.textTertiary,
         tabBarStyle: {
-          backgroundColor: '#fff',
+          backgroundColor: COLORS.surface,
           borderTopWidth: 1,
-          borderTopColor: '#F5F6FA',
+          borderTopColor: COLORS.borderLight,
           height: 56 + insets.bottom,
           paddingBottom: insets.bottom + 6,
           paddingTop: 6,
@@ -168,7 +127,7 @@ export default function App() {
   if (!dbReady) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator size="large" color="#6C5CE7" />
+        <ActivityIndicator size="large" color={COLORS.primary} />
         <Text style={styles.loadingText}>Carregando...</Text>
       </View>
     );
@@ -186,6 +145,6 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F5F6FA' },
-  loadingText: { marginTop: 12, color: '#636E72', fontSize: 15 },
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.background },
+  loadingText: { marginTop: 12, color: COLORS.textSecondary, fontSize: 15 },
 });

@@ -57,8 +57,8 @@ const BudgetsScreen = () => {
       });
       setShowModal(false);
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível criar o orçamento.');
-      console.error(error);
+      const msg = error?.userMessage || 'Não foi possível criar o orçamento.';
+      Alert.alert('Erro ao criar orçamento', msg);
     }
   };
 
@@ -72,7 +72,8 @@ const BudgetsScreen = () => {
             await deleteBudget(id);
             Alert.alert('Sucesso', 'Orçamento deletado!');
           } catch (error) {
-            Alert.alert('Erro', 'Não foi possível deletar o orçamento.');
+            const msg = error?.userMessage || 'Não foi possível deletar o orçamento.';
+            Alert.alert('Erro ao deletar orçamento', msg);
           }
         },
         style: 'destructive',
@@ -92,13 +93,13 @@ const BudgetsScreen = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'OK':
-        return '#2ED573';
+        return COLORS.success;
       case 'AVISO':
-        return '#FFB84D';
+        return COLORS.warning;
       case 'EXCEDIDO':
-        return '#FF4757';
+        return COLORS.danger;
       default:
-        return '#636E72';
+        return COLORS.textSecondary;
     }
   };
 
@@ -116,7 +117,7 @@ const BudgetsScreen = () => {
   };
 
   const renderBudget = ({ item }) => {
-    const percentualUsado = (item.gasto_atual / item.limite) * 100;
+    const percentualUsado = item.limite > 0 ? (item.gasto_atual / item.limite) * 100 : 0;
 
     return (
       <View style={styles.budgetCard}>
@@ -164,7 +165,7 @@ const BudgetsScreen = () => {
                 styles.valueLarge,
                 {
                   color:
-                    item.limite - item.gasto_atual > 0 ? '#2ED573' : '#FF4757',
+                    item.limite - item.gasto_atual > 0 ? COLORS.success : COLORS.danger,
                 },
               ]}
             >
@@ -440,7 +441,7 @@ const BudgetsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F6FA',
+    backgroundColor: COLORS.background,
   },
   header: {
     paddingHorizontal: 12,
@@ -450,12 +451,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#2D3436',
+    color: COLORS.text,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: '#636E72',
+    color: COLORS.textSecondary,
   },
   loadingContainer: {
     flex: 1,
@@ -468,7 +469,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   budgetCard: {
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.surface,
     borderRadius: 12,
     padding: 20,
     marginVertical: 8,
@@ -487,11 +488,11 @@ const styles = StyleSheet.create({
   budgetCategory: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#2D3436',
+    color: COLORS.text,
   },
   budgetPeriod: {
     fontSize: 14,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     marginTop: 4,
   },
   budgetStatus: {
@@ -512,11 +513,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E8EAED',
+    borderBottomColor: COLORS.border,
   },
   valueLabel: {
     fontSize: 11,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     marginBottom: 4,
   },
   valueLarge: {
@@ -529,7 +530,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 10,
-    backgroundColor: '#E8EAED',
+    backgroundColor: COLORS.border,
     borderRadius: 5,
     overflow: 'hidden',
     marginBottom: 6,
@@ -540,7 +541,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     fontSize: 11,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     textAlign: 'right',
   },
   budgetActions: {
@@ -555,15 +556,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   suggestionsBtn: {
-    backgroundColor: '#FFF3E0',
+    backgroundColor: COLORS.warning + '33',
   },
   deleteBtn: {
-    backgroundColor: '#FFE5E5',
+    backgroundColor: COLORS.danger + '22',
   },
   actionBtnText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FF6B35',
+    color: COLORS.warning,
   },
   deleteBtnText: {
     fontSize: 18,
@@ -581,12 +582,12 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2D3436',
+    color: COLORS.text,
     marginBottom: 8,
   },
   emptySubtext: {
     fontSize: 14,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     textAlign: 'center',
     paddingHorizontal: 20,
   },
@@ -600,7 +601,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
   fabText: {
-    color: '#fff',
+    color: COLORS.textInverse,
     fontWeight: '600',
     fontSize: 14,
   },
@@ -610,7 +611,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 20,
@@ -626,19 +627,19 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#2D3436',
+    color: COLORS.text,
   },
   closeBtn: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: COLORS.borderLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
   closeBtnText: {
     fontSize: 20,
-    color: '#636E72',
+    color: COLORS.textSecondary,
   },
   formContainer: {
     marginBottom: 20,
@@ -649,7 +650,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2D3436',
+    color: COLORS.text,
     marginBottom: 8,
   },
   categoryList: {
@@ -659,7 +660,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: COLORS.borderLight,
     marginRight: 8,
   },
   categoryOptionActive: {
@@ -667,21 +668,21 @@ const styles = StyleSheet.create({
   },
   categoryOptionText: {
     fontSize: 14,
-    color: '#636E72',
+    color: COLORS.textSecondary,
   },
   categoryOptionTextActive: {
-    color: '#fff',
+    color: COLORS.textInverse,
     fontWeight: '600',
   },
   input: {
-    backgroundColor: '#F5F6FA',
+    backgroundColor: COLORS.background,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: '#E8EAED',
+    borderColor: COLORS.border,
     fontSize: 14,
-    color: '#2D3436',
+    color: COLORS.text,
   },
   periodRow: {
     flexDirection: 'row',
@@ -692,7 +693,7 @@ const styles = StyleSheet.create({
   },
   periodLabel: {
     fontSize: 11,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     marginBottom: 4,
   },
   modalActions: {
@@ -708,7 +709,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelBtn: {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: COLORS.borderLight,
   },
   saveBtn: {
     backgroundColor: COLORS.primary,
@@ -720,12 +721,12 @@ const styles = StyleSheet.create({
   cancelBtnText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#636E72',
+    color: COLORS.textSecondary,
   },
   saveBtnText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#fff',
+    color: COLORS.textInverse,
   },
   suggestionsContainer: {
     marginBottom: 20,
@@ -734,22 +735,22 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E8EAED',
+    borderBottomColor: COLORS.border,
   },
   suggestionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#2D3436',
+    color: COLORS.text,
     marginBottom: 8,
   },
   suggestionText: {
     fontSize: 14,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     lineHeight: 20,
   },
   dicaItem: {
     fontSize: 14,
-    color: '#636E72',
+    color: COLORS.textSecondary,
     marginBottom: 8,
     lineHeight: 18,
   },

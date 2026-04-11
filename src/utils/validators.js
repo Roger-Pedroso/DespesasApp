@@ -2,6 +2,8 @@
  * Validators - Funções de validação robustas
  */
 
+import { FORMAS_PAGAMENTO, RECORRENCIAS } from './constants';
+
 /**
  * Valida se uma data está em formato RFC 3339 (YYYY-MM-DD)
  * @param {string} dateStr - Data em string
@@ -66,20 +68,16 @@ export const isValidCategoria = (categoria, categoriasValidas = []) => {
  * @param {string} formaPagamento - Forma de pagamento
  * @returns {boolean}
  */
-export const isValidFormaPagamento = (formaPagamento) => {
-  const formasValidas = ['debito', 'credito', 'pix'];
-  return formasValidas.includes(formaPagamento);
-};
+export const isValidFormaPagamento = (formaPagamento) =>
+  FORMAS_PAGAMENTO.map((f) => f.value).includes(formaPagamento);
 
 /**
  * Valida recorrências válidas
  * @param {string} recorrencia - Tipo de recorrência
  * @returns {boolean}
  */
-export const isValidRecorrencia = (recorrencia) => {
-  const recorrenciasValidas = ['unica', 'diaria', 'semanal', 'mensal', 'anual'];
-  return recorrenciasValidas.includes(recorrencia);
-};
+export const isValidRecorrencia = (recorrencia) =>
+  RECORRENCIAS.map((r) => r.value).includes(recorrencia);
 
 /**
  * Valida despesa completa

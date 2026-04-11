@@ -64,7 +64,7 @@ const HomeScreen = ({ navigation }) => {
       </View>
 
       {loading ? (
-        <ActivityIndicator style={styles.loading} size="large" color="#6C5CE7" />
+        <ActivityIndicator style={styles.loading} size="large" color={COLORS.primary} />
       ) : despesas.length === 0 ? (
         <View style={styles.empty}>
           <Text style={styles.emptyIcon}>📭</Text>

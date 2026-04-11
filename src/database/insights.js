@@ -171,7 +171,7 @@ export const preverGastoAteFinaldoMes = async (mes, ano) => {
       diasRestantes: ultimoDia - diaAtual,
       mediaPorDia,
       previsaoTotal,
-      percentualDoMes: (diaAtual / ultimoDia) * 100,
+      percentualDoMes: ultimoDia > 0 ? (diaAtual / ultimoDia) * 100 : 0,
     };
   } catch (error) {
     const handled = handleError(error, 'preverGastoAteFinaldoMes');
